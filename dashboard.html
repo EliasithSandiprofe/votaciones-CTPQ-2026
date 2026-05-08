@@ -70,6 +70,8 @@
   </div>
 </main>
 
+<div id="chart-tooltip" class="chart-tooltip" aria-hidden="true"></div>
+
 <footer>
   <div class="footer-title">Sistema Electoral · CTPQ 2026</div>
   <div class="footer-sub">Diseñado por <strong>Greikol Q.A</strong></div>
@@ -92,6 +94,43 @@ const state = {
   votesByParty: {},
   realtimeChannel: null
 };
+
+const tooltip = document.getElementById('chart-tooltip');
+
+function hideTooltip() {
+  if (!tooltip) return;
+  tooltip.classList.remove('show');
+}
+
+function moveTooltip(event) {
+  if (!tooltip) return;
+  const offset = 14;
+  const tipW = tooltip.offsetWidth || 180;
+  const tipH = tooltip.offsetHeight || 64;
+  const maxX = window.innerWidth - tipW - 8;
+  const maxY = window.innerHeight - tipH - 8;
+  const x = Math.min(event.clientX + offset, maxX);
+  const y = Math.min(event.clientY + offset, maxY);
+  tooltip.style.left = `${Math.max(8, x)}px`;
+  tooltip.style.top = `${Math.max(8, y)}px`;
+}
+
+function showTooltip(event, party, totalVotes) {
+  if (!tooltip || !party) return;
+  tooltip.innerHTML = `
+    <div class="chart-tooltip-name">${party.name}</div>
+    <div class="chart-tooltip-votes">${party.votes} voto${party.votes === 1 ? '' : 's'} (${pct(party.votes, totalVotes)}%)</div>
+  `;
+  tooltip.classList.add('show');
+  moveTooltip(event);
+}
+
+function bindTooltip(target, party, totalVotes) {
+  if (!target) return;
+  target.addEventListener('mouseenter', (event) => showTooltip(event, party, totalVotes));
+  target.addEventListener('mousemove', moveTooltip);
+  target.addEventListener('mouseleave', hideTooltip);
+}
 
 function buildPartiesWithVotes() {
   return parties.map((party) => ({
@@ -120,6 +159,7 @@ function renderDashboard() {
   const sorted = [...partiesWithVotes].sort((a, b) => b.votes - a.votes);
   const winner = sorted[0];
 
+  hideTooltip();
   clearSections();
 
   const tb = document.getElementById('totals-bar');
@@ -182,15 +222,17 @@ function renderDashboard() {
   sorted.forEach((party) => {
     const isImage = party.icon && (party.icon.startsWith('http') || party.icon.includes('/') || /\.(png|jpe?g|gif|webp|svg)$/i.test(party.icon));
     const iconMarkup = isImage ? '' : party.icon;
-    hbar.innerHTML += `
-      <div class="hbar-row">
-        <div class="hbar-label">${iconMarkup ? `${iconMarkup} ` : ''}${party.name}</div>
-        <div class="hbar-track">
-          <div class="hbar-fill" style="background:${party.color}; width:${pct(party.votes, totalVotes)}%"></div>
-        </div>
-        <div class="hbar-val" style="color:${party.color}">${party.votes}</div>
+    const row = document.createElement('div');
+    row.className = 'hbar-row chart-hover-target';
+    row.innerHTML = `
+      <div class="hbar-label">${iconMarkup ? `${iconMarkup} ` : ''}${party.name}</div>
+      <div class="hbar-track">
+        <div class="hbar-fill" style="background:${party.color}; width:${pct(party.votes, totalVotes)}%"></div>
       </div>
+      <div class="hbar-val" style="color:${party.color}">${party.votes}</div>
     `;
+    bindTooltip(row, party, totalVotes);
+    hbar.appendChild(row);
   });
 
   const cx = 80, cy = 80, r = 60, stroke = 22;
@@ -213,19 +255,23 @@ function renderDashboard() {
     circle.setAttribute('stroke-dasharray', `${dash} ${gap}`);
     circle.setAttribute('stroke-dashoffset', -(offset * circ - circ / 4));
     circle.style.transition = 'stroke-dashoffset .8s ease';
+    circle.classList.add('chart-hover-target');
+    bindTooltip(circle, party, totalVotes);
     donut.appendChild(circle);
     offset += frac;
   });
 
   const legend = document.getElementById('donut-legend');
   sorted.forEach((party) => {
-    legend.innerHTML += `
-      <div class="legend-item">
+    const item = document.createElement('div');
+    item.className = 'legend-item chart-hover-target';
+    item.innerHTML = `
         <div class="legend-dot" style="background:${party.color}"></div>
         <span style="color:var(--muted)">${party.name}</span>
         <strong style="margin-left:.3rem">${pct(party.votes, totalVotes)}%</strong>
-      </div>
     `;
+    bindTooltip(item, party, totalVotes);
+    legend.appendChild(item);
   });
 
   const tbody = document.getElementById('results-table');

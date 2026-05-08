@@ -398,6 +398,45 @@ header h1 span {
   font-size: 0.82rem;
 }
 
+.chart-hover-target {
+  cursor: pointer;
+}
+
+.chart-tooltip {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 120;
+  pointer-events: none;
+  background: rgba(15, 23, 42, 0.95);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.65rem;
+  padding: 0.5rem 0.65rem;
+  box-shadow: 0 10px 28px rgba(2, 6, 23, 0.35);
+  transform: translateY(4px);
+  opacity: 0;
+  transition: opacity 0.12s ease, transform 0.12s ease;
+  max-width: 220px;
+}
+
+.chart-tooltip.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.chart-tooltip-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.9rem;
+  line-height: 1.2;
+  margin-bottom: 0.2rem;
+}
+
+.chart-tooltip-votes {
+  font-size: 0.78rem;
+  color: #cbd5e1;
+}
+
 .legend-dot {
   width: 10px;
   height: 10px;
