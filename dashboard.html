@@ -225,11 +225,13 @@ function renderDashboard() {
   const hbar = document.getElementById('hbar-list');
   sorted.forEach((party) => {
     const isImage = party.icon && (party.icon.startsWith('http') || party.icon.includes('/') || /\.(png|jpe?g|gif|webp|svg)$/i.test(party.icon));
-    const iconMarkup = isImage ? '' : party.icon;
+    const iconMarkup = isImage
+      ? `<img class="hbar-icon" src="${party.icon}" alt="${party.name}">`
+      : `<span>${party.icon || '⭐'}</span>`;
     const row = document.createElement('div');
     row.className = 'hbar-row chart-hover-target';
     row.innerHTML = `
-      <div class="hbar-label">${iconMarkup ? `${iconMarkup} ` : ''}${party.name}</div>
+      <div class="hbar-label">${iconMarkup}${party.name}</div>
       <div class="hbar-track">
         <div class="hbar-fill" style="background:${party.color}; width:${pct(party.votes, totalVotes)}%"></div>
       </div>
