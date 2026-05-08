@@ -452,9 +452,20 @@ footer {
   background: var(--blanco);
   border-top: 3px solid var(--dorado);
   text-align: center;
-  padding: 1rem;
+  padding: 1.15rem 1rem;
+}
+
+.footer-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--azul-os);
+}
+
+.footer-sub {
   font-size: 0.74rem;
   color: var(--muted);
+  margin-top: 0.2rem;
 }
 
 @keyframes growBar {

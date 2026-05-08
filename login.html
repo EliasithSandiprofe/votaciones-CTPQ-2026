@@ -239,6 +239,24 @@
             border: 1px solid #a7f3d0;
         }
 
+        .site-footer {
+            text-align: center;
+            padding: 1rem 1rem 1.25rem;
+        }
+
+        .footer-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--azul-os);
+        }
+
+        .footer-sub {
+            font-size: 0.74rem;
+            color: #64748b;
+            margin-top: 0.2rem;
+        }
+
         @media (max-width: 900px) {
             .login-shell { grid-template-columns: 1fr; }
             .hero-panel { padding-bottom: 0; }
@@ -298,6 +316,11 @@
             </div>
         </section>
     </div>
+
+    <footer class="site-footer">
+        <div class="footer-title">Sistema Electoral · CTPQ 2026</div>
+        <div class="footer-sub">Diseñado por <strong>Greikol Q.A</strong></div>
+    </footer>
 
     <script>
         if (localStorage.getItem('loggedIn')) {
@@ -391,7 +414,7 @@
                     globalThis.location.href = 'dashboard.html';
                     return;
                 }
-                showFeedback('No se pudo validar el acceso. Revisa la conexión o las políticas de Supabase.');
+                showFeedback('No se pudo validar el acceso. Intenta de nuevo en unos segundos.');
             } finally {
                 submitBtn.disabled = false;
                 buttonText.textContent = 'Ingresar';
