@@ -5,68 +5,70 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Resultados CTPQ</title>
 <link rel="icon" type="image/png" href="logo%20ctpq.png?v=1">
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.43.4/dist/umd/supabase.js"></script>
 <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
 
-<header>
-  <div style="display: flex; align-items: center; gap: 1rem; flex: 1;">
-    <img src="logo%20ctpq.png" alt="Logo CTPQ" style="height: 60px; width: auto;">
-    <div>
-      <p class="eyebrow">📊 Resultados Oficiales CTPQ 2026</p>
-      <h1>Resultados <span>CTPQ</span></h1>
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <img src="logo%20ctpq.png" alt="Logo CTPQ" class="header-logo">
+      <div>
+        <p class="eyebrow">Resultados Oficiales CTPQ 2026</p>
+        <h1>Resultados <span>CTPQ</span></h1>
+      </div>
     </div>
-  </div>
-  <div style="display:flex; gap: .5rem; flex-wrap: wrap;">
-    <a href="partidos.html" style="background-color: #1E40AF; color: white; padding: 0.75rem 1rem; border-radius: 0.5rem; text-decoration: none; font-weight: bold; font-size: 0.9rem; height: fit-content;">Gestionar partidos</a>
-    <button id="logout-btn" style="background-color: #DC2626; color: white; padding: 0.75rem 1.5rem; border-radius: 0.5rem; border: none; cursor: pointer; font-weight: bold; font-size: 0.9rem; height: fit-content; transition: background-color 0.2s;">Cerrar sesión</button>
+    <div class="header-actions">
+      <a href="partidos.html" class="btn-nav">Gestionar partidos</a>
+      <button id="logout-btn" class="btn-logout">Cerrar sesión</button>
+    </div>
   </div>
 </header>
 
-<!-- Totals -->
-<div class="totals-bar" id="totals-bar"></div>
+<main class="dashboard-main">
+  <!-- Totals -->
+  <div class="totals-bar" id="totals-bar"></div>
 
-<!-- Winner -->
-<div class="winner-banner" id="winner-banner"></div>
+  <!-- Winner -->
+  <div class="winner-banner" id="winner-banner"></div>
 
-<!-- Cards -->
-<div class="grid" id="cards-grid"></div>
+  <!-- Cards -->
+  <div class="grid" id="cards-grid"></div>
 
-<!-- Horizontal bar chart -->
-<div class="chart-section">
-  <div class="section-title"><span>Distribución</span> de Votos</div>
-  <div class="hbar-list" id="hbar-list"></div>
-</div>
-
-<!-- Donut + table -->
-<div class="chart-section">
-  <div class="section-title"><span>Proporción</span> por partido</div>
-  <div class="donut-wrap">
-    <svg class="donut-svg" viewBox="0 0 160 160" id="donut-svg"></svg>
-    <div class="donut-legend" id="donut-legend"></div>
+  <!-- Horizontal bar chart -->
+  <div class="chart-section">
+    <div class="section-title"><span>Distribución</span> de votos</div>
+    <div class="hbar-list" id="hbar-list"></div>
   </div>
-</div>
 
-<!-- Results table -->
-<div class="chart-section">
-  <div class="section-title"><span>Tabla</span> de resultados</div>
-  <table>
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Partido</th>
-        <th>Candidato/a</th>
-        <th>Votos</th>
-        <th>%</th>
-      </tr>
-    </thead>
-    <tbody id="results-table"></tbody>
-  </table>
-</div>
+  <!-- Donut + table -->
+  <div class="chart-section">
+    <div class="section-title"><span>Proporción</span> por partido</div>
+    <div class="donut-wrap">
+      <svg class="donut-svg" viewBox="0 0 160 160" id="donut-svg"></svg>
+      <div class="donut-legend" id="donut-legend"></div>
+    </div>
+  </div>
+
+  <!-- Results table -->
+  <div class="chart-section">
+    <div class="section-title"><span>Tabla</span> de resultados</div>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Partido</th>
+          <th>Candidato/a</th>
+          <th>Votos</th>
+          <th>%</th>
+        </tr>
+      </thead>
+      <tbody id="results-table"></tbody>
+    </table>
+  </div>
+</main>
 
 <footer>
   Resultados en vivo desde Supabase.
