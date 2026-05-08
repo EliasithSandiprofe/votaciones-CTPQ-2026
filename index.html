@@ -609,6 +609,7 @@
         let selectedParty = '';
         let selectedPartyId = null;
         let isVoting = false;
+        let nextVoterTimer = null;
 
         // ── Helpers de seguridad (anti-XSS) ──────────────────────────────
         function esc(s) {
@@ -727,7 +728,7 @@
 
                 sessionStorage.setItem('ctpq_voted', '1');
                 closeModal();
-                document.getElementById('thanksScreen').style.display = 'flex';
+                showThanksScreen();
             } catch (e) {
                 console.error(e);
                 isVoting = false;
@@ -739,8 +740,27 @@
             }
         }
 
+        function showThanksScreen() {
+            const thanksScreen = document.getElementById('thanksScreen');
+            thanksScreen.style.display = 'flex';
+
+            if (nextVoterTimer) {
+                clearTimeout(nextVoterTimer);
+            }
+
+            // Si nadie toca la pantalla, el sistema pasa automáticamente al siguiente estudiante.
+            nextVoterTimer = setTimeout(() => {
+                resetSystem();
+            }, 4000);
+        }
+
         function resetSystem() {
+            if (nextVoterTimer) {
+                clearTimeout(nextVoterTimer);
+                nextVoterTimer = null;
+            }
             document.getElementById('thanksScreen').style.display = 'none';
+            sessionStorage.removeItem('ctpq_voted');
             isVoting = false;
             selectedParty   = '';
             selectedPartyId = null;
@@ -752,7 +772,7 @@
         document.getElementById('thanksScreen').addEventListener('click', resetSystem);
 
         if (sessionStorage.getItem('ctpq_voted')) {
-            document.getElementById('thanksScreen').style.display = 'flex';
+            showThanksScreen();
         } else {
             await loadPartidos();
         }
