@@ -101,6 +101,19 @@ const state = {
 
 const tooltip = document.getElementById('chart-tooltip');
 
+// ── Helpers de seguridad (anti-XSS) ──────────────────────────────
+function esc(s) {
+  return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+function safeColor(c) {
+  return /^#[0-9a-fA-F]{3,8}$/.test(String(c || '')) ? c : '#1E40AF';
+}
+function safeImgSrc(url) {
+  if (!url) return '';
+  if (/^data:image\//i.test(url)) return url;
+  try { const u = new URL(url); return ['https:', 'http:'].includes(u.protocol) ? url : ''; } catch { return ''; }
+}
+
 function hideTooltip() {
   if (!tooltip) return;
   tooltip.classList.remove('show');
@@ -195,8 +208,8 @@ function renderDashboard() {
     const isWinner = index === 0;
     const isImage = party.icon && (party.icon.startsWith('http') || party.icon.includes('/') || /\.(png|jpe?g|gif|webp|svg)$/i.test(party.icon));
     const iconMarkup = isImage
-      ? `<img src="${party.icon}" alt="${party.name}" style="width: 2.8rem; height: 2.8rem; object-fit: contain;">`
-      : party.icon;
+      ? `<img src="${safeImgSrc(party.icon)}" alt="${party.name}" style="width: 2.8rem; height: 2.8rem; object-fit: contain;">`
+      : esc(party.icon);
     const card = document.createElement('div');
     card.className = `card${isWinner ? ' winner-card' : ''}`;
     card.innerHTML = `
@@ -226,8 +239,8 @@ function renderDashboard() {
   sorted.forEach((party) => {
     const isImage = party.icon && (party.icon.startsWith('http') || party.icon.includes('/') || /\.(png|jpe?g|gif|webp|svg)$/i.test(party.icon));
     const iconMarkup = isImage
-      ? `<img class="hbar-icon" src="${party.icon}" alt="${party.name}">`
-      : `<span>${party.icon || '⭐'}</span>`;
+      ? `<img class="hbar-icon" src="${safeImgSrc(party.icon)}" alt="${party.name}">`
+      : `<span>${esc(party.icon || '⭐')}</span>`;
     const row = document.createElement('div');
     row.className = 'hbar-row chart-hover-target';
     row.innerHTML = `
@@ -323,10 +336,10 @@ async function loadResults() {
 
     parties = (partidosData || []).map((party) => ({
       id: party.id,
-      name: party.nombre,
-      candidate: party.candidato,
+      name: esc(party.nombre || ''),
+      candidate: esc(party.candidato || ''),
       icon: party.icono || '⭐',
-      color: party.color || '#1E40AF',
+      color: safeColor(party.color || '#1E40AF'),
       tag: ''
     }));
 

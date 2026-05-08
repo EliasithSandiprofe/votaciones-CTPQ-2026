@@ -419,10 +419,6 @@
             try {
                 let result = await trySupabaseLogin(username, password);
 
-                if (!result.ok && username === 'admin' && password === 'admin') {
-                    result = { ok: true, username: 'admin' };
-                }
-
                 if (!result.ok) {
                     showFeedback('Usuario o contraseña incorrectos.');
                     return;
@@ -436,12 +432,6 @@
                 }, 700);
             } catch (error) {
                 console.error('Error de autenticación:', error);
-                if (username === 'admin' && password === 'admin') {
-                    localStorage.setItem('loggedIn', 'true');
-                    localStorage.setItem('username', 'admin');
-                    globalThis.location.href = 'dashboard.html';
-                    return;
-                }
                 showFeedback('No se pudo validar el acceso. Intenta de nuevo en unos segundos.');
             } finally {
                 submitBtn.disabled = false;

@@ -659,6 +659,19 @@
 
     let partidos = [];
 
+    // ── Helpers de seguridad (anti-XSS) ──────────────────────────────
+    function esc(s) {
+      return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+    function safeColor(c) {
+      return /^#[0-9a-fA-F]{3,8}$/.test(String(c || '')) ? c : '#1E40AF';
+    }
+    function safeImgSrc(url) {
+      if (!url) return '';
+      if (/^data:image\//i.test(url)) return url;
+      try { const u = new URL(url); return ['https:', 'http:'].includes(u.protocol) ? url : ''; } catch { return ''; }
+    }
+
     function showFeedback(msg, type) {
       feedback.className = 'feedback ' + type;
       feedback.innerHTML = '<i class="fas ' + (type === 'ok' ? 'fa-check-circle' : 'fa-circle-xmark') + '"></i>' + msg;
@@ -705,10 +718,11 @@
     }
 
     function partyVisual(icono, color) {
+      const safeC = safeColor(color || '#1E40AF');
       if (icono && isImg(icono)) {
-        return '<img class="party-thumb" src="' + icono + '" alt="logo">';
+        return '<img class="party-thumb" src="' + safeImgSrc(icono) + '" alt="logo">';
       }
-      return '<div class="party-icon-box" style="border-color:' + (color || '#1E40AF') + '33;">' + (icono || '⭐') + '</div>';
+      return '<div class="party-icon-box" style="border-color:' + safeC + '33;">' + esc(icono || '⭐') + '</div>';
     }
 
     function renderTable() {
@@ -720,21 +734,23 @@
         return;
       }
 
-      tbody.innerHTML = partidos.map(p => `
+      tbody.innerHTML = partidos.map(p => {
+        const c = safeColor(p.color || '#1E40AF');
+        return `
         <tr>
           <td>
             <div class="party-row">
               ${partyVisual(p.icono, p.color)}
               <div>
-                <div class="party-name">${p.nombre || 'Sin nombre'}</div>
-                <div class="party-candidate"><i class="fas fa-user" style="margin-right:.3rem;font-size:.7rem;"></i>${p.candidato || 'Sin candidato'}</div>
+                <div class="party-name">${esc(p.nombre || 'Sin nombre')}</div>
+                <div class="party-candidate"><i class="fas fa-user" style="margin-right:.3rem;font-size:.7rem;"></i>${esc(p.candidato || 'Sin candidato')}</div>
               </div>
             </div>
           </td>
           <td>
             <span class="color-chip">
-              <span class="color-dot" style="background:${p.color || '#1E40AF'};"></span>
-              ${p.color || '#1E40AF'}
+              <span class="color-dot" style="background:${c};"></span>
+              ${esc(p.color || '#1E40AF')}
             </span>
           </td>
           <td>
@@ -747,7 +763,8 @@
               </button>
             </div>
           </td>
-        </tr>`).join('');
+        </tr>`;
+      }).join('');
     }
 
     async function loadPartidos() {
