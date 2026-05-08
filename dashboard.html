@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Resultados — Elecciones Estudiantiles</title>
+<title>Resultados CTPQ</title>
 <link rel="icon" type="image/jpeg" href="logo.jpg?v=2">
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
@@ -17,13 +17,13 @@
   <div style="display: flex; align-items: center; gap: 1rem; flex: 1;">
     <img src="logo.jpg" alt="Logo" style="height: 60px; width: auto;">
     <div>
-      <p class="eyebrow">📊 Resultados Oficiales 2025</p>
-      <h1>Elecciones <span>Estudiantiles</span></h1>
+      <p class="eyebrow">📊 Resultados Oficiales CTPQ 2026</p>
+      <h1>Resultados <span>CTPQ</span></h1>
     </div>
   </div>
   <div style="display:flex; gap: .5rem; flex-wrap: wrap;">
-    <a href="partidos.html" style="background-color: #003D82; color: white; padding: 0.75rem 1rem; border-radius: 0.5rem; text-decoration: none; font-weight: bold; font-size: 0.9rem; height: fit-content;">Gestionar partidos</a>
-    <button id="logout-btn" style="background-color: #C60C30; color: white; padding: 0.75rem 1.5rem; border-radius: 0.5rem; border: none; cursor: pointer; font-weight: bold; font-size: 0.9rem; height: fit-content; transition: background-color 0.2s;">Cerrar sesión</button>
+    <a href="partidos.html" style="background-color: #1D4ED8; color: white; padding: 0.75rem 1rem; border-radius: 0.5rem; text-decoration: none; font-weight: bold; font-size: 0.9rem; height: fit-content;">Gestionar partidos</a>
+    <button id="logout-btn" style="background-color: #DC2626; color: white; padding: 0.75rem 1.5rem; border-radius: 0.5rem; border: none; cursor: pointer; font-weight: bold; font-size: 0.9rem; height: fit-content; transition: background-color 0.2s;">Cerrar sesión</button>
   </div>
 </header>
 
@@ -81,7 +81,7 @@ const SUPABASE_URL = 'https://kduvyccprrtuitdngcin.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtkdXZ5Y2NwcnJ0dWl0ZG5nY2luIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2NzMzOTYsImV4cCI6MjA5MzI0OTM5Nn0.IASwy18W9WSnqe6J9uRnQP5Jh61NI68VuT0oVDB8Jh8';
 const supabase = globalThis.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const schoolName = 'Escuela República de Corea';
+const schoolName = 'Colegio Tecnico Profesional de Quepos (CTPQ)';
 const electionDate = '1 de mayo, 2026';
 let parties = [];
 
@@ -264,7 +264,7 @@ async function loadResults() {
       name: party.nombre,
       candidate: party.candidato,
       icon: party.icono || '⭐',
-      color: party.color || '#003D82',
+      color: party.color || '#1D4ED8',
       tag: ''
     }));
 

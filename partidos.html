@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestor de Partidos</title>
+  <title>Gestor de Partidos CTPQ</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg?v=2">
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
@@ -11,8 +11,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.43.4/dist/umd/supabase.js"></script>
   <style>
     :root {
-      --azul-logo: #003D82;
-      --rojo-logo: #C60C30;
+      --azul-logo: #1D4ED8;
+      --rojo-logo: #DC2626;
       --fondo: #eef4ff;
       --surface: #ffffff;
       --text: #1f2937;
@@ -32,8 +32,8 @@
       font-family: 'Fredoka', sans-serif;
       color: var(--text);
       background:
-        radial-gradient(circle at top right, rgba(0, 61, 130, 0.10), transparent 33%),
-        radial-gradient(circle at bottom left, rgba(198, 12, 48, 0.10), transparent 30%),
+        radial-gradient(circle at top right, rgba(29, 78, 216, 0.10), transparent 33%),
+        radial-gradient(circle at bottom left, rgba(220, 38, 38, 0.10), transparent 30%),
         linear-gradient(140deg, var(--fondo) 0%, #ffffff 45%, #fff6f6 100%);
       min-height: 100vh;
     }
@@ -318,13 +318,13 @@
       <div class="title">
         <img src="logo.jpg" alt="Logo">
         <div>
-          <h1>Gestor de Partidos</h1>
-          <p class="subtitle">Crear, editar y eliminar partidos para tu votación.</p>
+          <h1>Gestor de Partidos CTPQ</h1>
+          <p class="subtitle">Crear, editar y eliminar partidos para la votacion del CTPQ.</p>
         </div>
       </div>
       <div class="actions">
         <a href="dashboard.html" class="btn btn-secondary"><i class="fa-solid fa-chart-line"></i>Dashboard</a>
-        <a href="index.html" class="btn btn-secondary"><i class="fa-solid fa-vote-yea"></i>Pantalla de voto</a>
+        <a href="index.html" class="btn btn-secondary"><i class="fa-solid fa-vote-yea"></i>Votacion CTPQ</a>
       </div>
     </header>
 
@@ -352,7 +352,7 @@
 
             <div class="field-wrap">
               <label for="party-color">Color</label>
-              <input id="party-color" class="field" type="color" value="#003D82">
+              <input id="party-color" class="field" type="color" value="#1D4ED8">
             </div>
 
             <div class="field-wrap">
@@ -476,7 +476,7 @@
       formTitle.textContent = 'Nuevo partido';
       partyNameField.value = '';
       partyCandidateField.value = '';
-      partyColorField.value = '#003D82';
+      partyColorField.value = '#1D4ED8';
       partyIconField.value = '';
       partyImageField.value = '';
       deleteBtn.disabled = true;
@@ -490,7 +490,7 @@
       formTitle.textContent = 'Editar partido #' + party.id;
       partyNameField.value = party.nombre || '';
       partyCandidateField.value = party.candidato || '';
-      partyColorField.value = party.color || '#003D82';
+      partyColorField.value = party.color || '#1D4ED8';
       partyIconField.value = party.icono || '';
       partyImageField.value = '';
       deleteBtn.disabled = false;
@@ -503,7 +503,7 @@
       if (icono && isImageValue(icono)) {
         return '<img class="party-thumb" src="' + icono + '" alt="logo">';
       }
-      return '<div class="party-icon" style="color:' + (color || '#003D82') + '">' + (icono || '⭐') + '</div>';
+      return '<div class="party-icon" style="color:' + (color || '#1D4ED8') + '">' + (icono || '⭐') + '</div>';
     }
 
     function renderTable() {
@@ -521,7 +521,7 @@
             '<strong>' + (party.nombre || 'Sin nombre') + '</strong>' +
           '</div></td>' +
           '<td>' + (party.candidato || 'Sin candidato') + '</td>' +
-          '<td><span class="chip">' + (party.color || '#003D82') + '</span></td>' +
+          '<td><span class="chip">' + (party.color || '#1D4ED8') + '</span></td>' +
           '<td><div class="inline-actions">' +
             '<button class="btn btn-secondary small" type="button" data-action="edit" data-id="' + party.id + '"><i class="fa-solid fa-pen"></i>Editar</button>' +
             '<button class="btn btn-danger small" type="button" data-action="delete" data-id="' + party.id + '"><i class="fa-solid fa-trash"></i>Borrar</button>' +

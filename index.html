@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Votación Escuela Corea</title>
+    <title>Votación CTPQ</title>
     <link rel="icon" type="image/jpeg" href="logo.jpg?v=2">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
@@ -12,8 +12,9 @@
     <style>
         body { font-family: 'DM Sans', sans-serif; }
         :root {
-            --azul-logo: #003D82;
-            --rojo-logo: #C60C30;
+            --azul-logo: #1D4ED8;
+            --rojo-logo: #DC2626;
+            --blanco-logo: #F8FAFF;
         }
     </style>
 </head>
@@ -25,17 +26,17 @@
             <div class="flex items-center gap-6">
                 <img src="logo.jpg" alt="Logo Escuela" class="h-24 w-auto">
                 <div class="text-center md:text-left">
-                    <h1 class="text-2xl md:text-3xl font-extrabold uppercase tracking-wide leading-tight" style="color: #003D82;">
-                        Escuela República de Corea
+                    <h1 class="text-2xl md:text-3xl font-extrabold uppercase tracking-wide leading-tight" style="color: var(--azul-logo);">
+                        Colegio Tecnico Profesional de Quepos (CTPQ)
                     </h1>
                     <div class="mt-2 inline-block">
-                        <p class="text-sm font-bold uppercase tracking-widest px-4 py-1 rounded-full" style="background: linear-gradient(135deg, #003D82 0%, #C60C30 100%); color: white;">
-                            Sistema de Votación Digital
+                        <p class="text-sm font-bold uppercase tracking-widest px-4 py-1 rounded-full" style="background: linear-gradient(135deg, var(--azul-logo) 0%, var(--rojo-logo) 100%); color: var(--blanco-logo);">
+                            Sistema de Votacion CTPQ
                         </p>
                     </div>
                 </div>
             </div>
-            <a href="login.html" class="text-white font-bold py-2 px-4 rounded-xl text-sm transition shadow-md hover:shadow-lg" style="background-color: #003D82;">
+            <a href="login.html" class="text-white font-bold py-2 px-4 rounded-xl text-sm transition shadow-md hover:shadow-lg" style="background-color: var(--azul-logo);">
                 Login
             </a>
         </div>
@@ -46,7 +47,7 @@
         
         <!-- Título -->
         <h1 class="text-2xl md:text-4xl lg:text-5xl font-extrabold text-center mb-10 leading-tight">
-            <span style="color: #003D82;">¡VOTA POR TU </span><span style="color: #C60C30;">CANDIDATO!</span>
+            <span style="color: var(--azul-logo);">¡VOTA EN EL </span><span style="color: var(--rojo-logo);">CTPQ!</span>
         </h1>
         
         <!-- Grid de Candidatos -->
@@ -57,9 +58,9 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-t-4 py-4 text-center" style="border-color: #003D82;">
-        <p class="font-bold uppercase text-sm tracking-wide" style="color: #003D82;">
-            Sistema Electoral Escolar 2026
+    <footer class="bg-white border-t-4 py-4 text-center" style="border-color: var(--azul-logo);">
+        <p class="font-bold uppercase text-sm tracking-wide" style="color: var(--azul-logo);">
+            Sistema Electoral CTPQ 2026
         </p>
         <p class="text-xs text-gray-500 mt-2">
             Diseñado por <span class="font-semibold">Greikol Q.A</span>
@@ -69,17 +70,17 @@
     <!-- Modal de Confirmación -->
     <div id="confirmModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
         <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-8 transform transition-all text-center">
-            <div class="mb-4 text-5xl" style="color: #003D82;">
+            <div class="mb-4 text-5xl" style="color: var(--azul-logo);">
                 <i class="fas fa-vote-yea"></i>
             </div>
             <h2 class="text-2xl font-bold text-gray-800 mb-2">¿Confirmar voto?</h2>
             <p class="text-gray-500 mb-8 px-4">
                 Estás a punto de votar por:<br>
-                <span id="partyName" class="font-bold text-xl block mt-2" style="color: #C60C30;"></span>
+                <span id="partyName" class="font-bold text-xl block mt-2" style="color: var(--rojo-logo);"></span>
             </p>
             <div class="flex flex-col gap-3">
                 <button id="confirm-vote-btn"
-                        class="w-full text-white font-bold py-3 px-6 rounded-xl text-lg transition shadow-md" style="background-color: #003D82;">
+                        class="w-full text-white font-bold py-3 px-6 rounded-xl text-lg transition shadow-md" style="background-color: var(--azul-logo);">
                     ¡Votar ahora!
                 </button>
                 <button id="close-modal-btn"
@@ -93,7 +94,7 @@
     <!-- Pantalla de Gracias -->
         <button id="thanksScreen" 
             class="hidden fixed inset-0 flex items-center justify-center z-50 cursor-pointer border-0 p-0" 
-            style="background: linear-gradient(135deg, #003D82 0%, #C60C30 100%);" 
+            style="background: linear-gradient(135deg, var(--azul-logo) 0%, var(--rojo-logo) 100%);" 
             type="button">
         <div class="text-center px-4">
             <div class="text-white text-9xl mb-6 animate-bounce">
@@ -136,7 +137,7 @@
             empty.classList.add('hidden');
 
             partidos.forEach((party) => {
-                const color = party.color || '#003D82';
+                const color = party.color || '#1D4ED8';
                 const icon = party.icono || '⭐';
                 const isImage = icon.startsWith('http') || icon.includes('/') || /\.(png|jpe?g|gif|webp|svg)$/i.test(icon);
                 const iconMarkup = isImage
@@ -154,7 +155,7 @@
                         <h2 class="text-lg font-bold text-gray-800 uppercase tracking-tight text-center leading-tight">${nombre}</h2>
                     </div>
                     <p class="text-sm text-gray-500 text-center mb-4">${candidato}</p>
-                    <button type="button" class="vote-btn w-full text-white font-bold py-3 px-6 rounded-xl text-xl transition flex items-center justify-center gap-2 shadow-md hover:shadow-lg hover:opacity-90" style="background-color: #003D82;">
+                    <button type="button" class="vote-btn w-full text-white font-bold py-3 px-6 rounded-xl text-xl transition flex items-center justify-center gap-2 shadow-md hover:shadow-lg hover:opacity-90" style="background-color: var(--azul-logo);">
                         VOTAR
                         <i class="fas fa-check-circle ml-2"></i>
                     </button>

@@ -1,15 +1,15 @@
 :root {
-    --bg: #f0f2ff;
+    --bg: #eef3ff;
     --surface: #ffffff;
-    --border: #e2e8f0;
-    --text: #003D82;
-    --muted: #6b7099;
-    --accent: #C60C30;
+    --border: #dbe4ff;
+    --text: #1E3A8A;
+    --muted: #5f6d86;
+    --accent: #DC2626;
 
-    --p1: #e84545; /* Partido 1 */
-    --p2: #3b82f6; /* Partido 2 */
-    --p3: #22c55e; /* Partido 3 */
-    --p4: #a855f7; /* Partido 4 */
+    --p1: #1D4ED8; /* Partido 1 */
+    --p2: #DC2626; /* Partido 2 */
+    --p3: #2563EB; /* Partido 3 */
+    --p4: #0F172A; /* Partido 4 */
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -108,7 +108,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse at 50% -30%, rgba(198, 12, 48, 0.1) 0%, transparent 70%);
+    background: radial-gradient(ellipse at 50% -30%, rgba(220, 38, 38, 0.1) 0%, transparent 70%);
   }
   .winner-banner .crown { font-size: 1.6rem; }
   .winner-banner .winner-label {
