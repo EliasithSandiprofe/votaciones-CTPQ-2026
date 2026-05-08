@@ -177,34 +177,6 @@
       align-items: center;
       justify-content: space-between;
       padding: 1.25rem 1.5rem 1rem;
-      @media (max-width: 640px) {
-        .header-inner,
-        .page-hero,
-        .main-grid {
-          padding-left: 1rem;
-          padding-right: 1rem;
-        }
-
-        .header-inner {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 0.75rem;
-        }
-
-        .header-nav {
-          width: 100%;
-        }
-
-        .btn-nav {
-          flex: 1;
-          justify-content: center;
-        }
-
-        .panel-header,
-        .panel-body {
-          padding: 1rem;
-        }
-      }
       border-bottom: 1px solid var(--borde);
       gap: 0.75rem;
     }
@@ -448,12 +420,69 @@
       flex-shrink: 0;
     }
     .row-actions { display: flex; gap: 0.4rem; }
+    .row-actions .btn { white-space: nowrap; }
     .empty-row {
       text-align: center;
       padding: 3rem 1rem;
       color: var(--muted);
     }
     .empty-row i { display: block; font-size: 2rem; opacity: 0.3; margin-bottom: 0.6rem; }
+
+    @media (max-width: 640px) {
+      .header-inner,
+      .page-hero,
+      .main-grid {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+
+      .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+
+      .header-nav {
+        width: 100%;
+      }
+
+      .btn-nav {
+        flex: 1;
+        justify-content: center;
+        min-width: 0;
+        font-size: 0.8rem;
+        padding: 0.5rem 0.7rem;
+      }
+
+      .panel-header,
+      .panel-body {
+        padding: 1rem;
+      }
+
+      .form-actions {
+        flex-direction: column;
+      }
+
+      .form-actions .btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .row-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .row-actions .btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .btn-sm {
+        font-size: 0.74rem;
+        padding: 0.42rem 0.6rem;
+      }
+    }
 
     /* ── FOOTER ── */
     .site-footer {
