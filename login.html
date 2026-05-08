@@ -11,8 +11,11 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.43.4/dist/umd/supabase.js"></script>
     <style>
         :root {
-            --azul-logo: #1D4ED8;
-            --rojo-logo: #DC2626;
+            --azul-logo:  #1E40AF;
+            --rojo-logo:  #DC2626;
+            --ambar:      #D97706;
+            --esmeralda:  #059669;
+            --violeta:    #7C3AED;
         }
 
         * { box-sizing: border-box; }
@@ -22,9 +25,9 @@
             min-height: 100vh;
             margin: 0;
             background:
-                radial-gradient(circle at top left, rgba(29, 78, 216, 0.10), transparent 35%),
-                radial-gradient(circle at bottom right, rgba(220, 38, 38, 0.12), transparent 32%),
-                linear-gradient(135deg, #eef5ff 0%, #fff 45%, #fff3f3 100%);
+                radial-gradient(circle at top left, rgba(5, 150, 105, 0.12), transparent 35%),
+                radial-gradient(circle at bottom right, rgba(217, 119, 6, 0.12), transparent 32%),
+                linear-gradient(135deg, #ecfdf5 0%, #fff 45%, #fffbeb 100%);
             color: #10233f;
         }
 
@@ -44,7 +47,7 @@
         .hero-card {
             width: 100%;
             max-width: 640px;
-            background: linear-gradient(160deg, rgba(29, 78, 216, .98), rgba(220, 38, 38, .92));
+            background: linear-gradient(160deg, rgba(30, 64, 175, .97), rgba(5, 150, 105, .92));
             color: white;
             border-radius: 2rem;
             padding: 2rem;
@@ -166,8 +169,8 @@
         }
 
         .field:focus {
-            border-color: var(--azul-logo);
-            box-shadow: 0 0 0 4px rgba(0, 61, 130, .12);
+            border-color: var(--esmeralda);
+            box-shadow: 0 0 0 4px rgba(5, 150, 105, .15);
         }
 
         .submit-btn {
@@ -178,14 +181,14 @@
             color: white;
             font-size: 1.15rem;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--azul-logo), var(--rojo-logo));
-            box-shadow: 0 14px 30px rgba(0, 61, 130, .25);
+            background: linear-gradient(135deg, var(--esmeralda), var(--azul-logo));
+            box-shadow: 0 14px 30px rgba(5, 150, 105, .30);
             transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease;
         }
 
         .submit-btn:hover {
             transform: translateY(-1px);
-            box-shadow: 0 16px 34px rgba(198, 12, 48, .22);
+            box-shadow: 0 16px 34px rgba(5, 150, 105, .35);
         }
 
         .submit-btn:disabled {
@@ -244,7 +247,7 @@
             <div class="form-card">
                 <div class="text-center mb-8">
                     <p class="text-sm uppercase tracking-[.28em] text-slate-500 font-bold">Bienvenido</p>
-                    <h1 class="text-3xl font-bold mt-2" style="color: var(--azul-logo);">Acceso al Sistema CTPQ</h1>
+                    <h1 class="text-3xl font-bold mt-2" style="color: var(--esmeralda);">Acceso al Sistema CTPQ</h1>
                     <p class="text-slate-500 mt-2">Ingresa tus credenciales para continuar.</p>
                 </div>
 
