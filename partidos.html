@@ -3,22 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestor de Partidos CTPQ</title>
+  <title>Gestor de Partidos · CTPQ</title>
   <link rel="icon" type="image/png" href="logo%20ctpq.png?v=1">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.43.4/dist/umd/supabase.js"></script>
   <style>
     :root {
-      --azul-logo:  #1E40AF;
+      --azul:       #1E40AF;
       --azul-os:    #1e3a8a;
+      --azul-cl:    #3B82F6;
       --dorado:     #B8860B;
       --dorado-c:   #F5C518;
-      --fondo:      #EFF3FF;
-      --surface:    #ffffff;
-      --text:       #1e293b;
-      --muted:      #64748b;
+      --dorado-p:   #FEF9C3;
+      --blanco:     #FFFFFF;
+      --fondo:      #F8FAFF;
+      --borde:      #E2E8F0;
+      --texto:      #1E293B;
+      --muted:      #64748B;
       --ok:         #065f46;
       --ok-bg:      #ecfdf5;
       --ok-border:  #a7f3d0;
@@ -27,384 +29,545 @@
       --err-border: #fecdd3;
     }
 
-    * { box-sizing: border-box; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      margin: 0;
-      font-family: 'Fredoka', sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at top right, rgba(30, 64, 175, 0.10), transparent 33%),
-        radial-gradient(circle at bottom left, rgba(184, 134, 11, 0.08), transparent 30%),
-        linear-gradient(140deg, var(--fondo) 0%, #ffffff 50%, #FEFBEA 100%);
+      font-family: 'Inter', sans-serif;
+      color: var(--texto);
+      background-color: var(--fondo);
+      background-image:
+        radial-gradient(ellipse at 0% 0%, rgba(30, 64, 175, 0.07) 0%, transparent 50%),
+        radial-gradient(ellipse at 100% 100%, rgba(184, 134, 11, 0.06) 0%, transparent 45%);
       min-height: 100vh;
     }
 
-    .container {
-      width: min(1120px, 92vw);
+    /* ── HEADER ── */
+    .site-header {
+      background: var(--blanco);
+      border-bottom: 3px solid var(--dorado);
+      box-shadow: 0 2px 20px rgba(30, 58, 138, 0.08);
+    }
+    .header-inner {
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 1.5rem 0 2.5rem;
-    }
-
-    .topbar {
+      padding: 1rem 1.5rem;
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-      background: var(--surface);
-      border: 1px solid rgba(0, 61, 130, 0.12);
-      border-radius: 1rem;
-      padding: 1rem 1.25rem;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-      margin-bottom: 1rem;
+      gap: 1.5rem;
     }
-
-    .title {
+    .header-brand {
       display: flex;
       align-items: center;
-      gap: 0.9rem;
+      gap: 1.25rem;
     }
-
-    .title img {
-      width: 56px;
-      height: 56px;
-      border-radius: 0.7rem;
-      object-fit: cover;
-      background: white;
-      padding: 0.25rem;
+    .header-logo {
+      height: 64px;
+      width: auto;
+      flex-shrink: 0;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.12));
     }
-
-    .title h1 {
-      margin: 0;
-      line-height: 1;
-      font-size: clamp(1.3rem, 2.3vw, 2rem);
-      color: var(--azul-logo);
-    }
-
-    .subtitle {
-      margin: 0.35rem 0 0;
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-
-    .btn {
-      border: 0;
-      border-radius: 0.75rem;
-      padding: 0.65rem 1rem;
-      font-size: 0.95rem;
+    .header-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1rem, 2vw, 1.35rem);
       font-weight: 700;
-      cursor: pointer;
+      color: var(--azul-os);
+      line-height: 1.2;
+    }
+    .header-badge {
       display: inline-flex;
       align-items: center;
-      gap: 0.45rem;
-      text-decoration: none;
-      transition: transform 0.18s ease, opacity 0.18s ease;
-    }
-
-    .btn:hover { transform: translateY(-1px); }
-    .btn:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
-
-    .btn-primary {
+      gap: 0.4rem;
+      margin-top: 0.3rem;
+      background: var(--azul-os);
       color: var(--dorado-c);
-      background: linear-gradient(135deg, var(--azul-logo), var(--azul-os));
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.8rem;
+      border-radius: 99px;
     }
-
-    .btn-secondary {
-      color: var(--azul-logo);
-      background: #dbeafe;
-    }
-
-    .btn-danger {
-      color: white;
-      background: #dc2626;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 360px 1fr;
-      gap: 1rem;
-    }
-
-    .card {
-      background: var(--surface);
-      border: 1px solid rgba(0, 61, 130, 0.12);
-      border-radius: 1rem;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    }
-
-    .card-head {
+    .header-nav {
       display: flex;
-      justify-content: space-between;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+    .btn-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--fondo);
+      border: 1.5px solid var(--borde);
+      color: var(--azul);
+      font-size: 0.83rem;
+      font-weight: 600;
+      padding: 0.55rem 1rem;
+      border-radius: 0.65rem;
+      text-decoration: none;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .btn-nav:hover { background: #DBEAFE; border-color: var(--azul-cl); }
+
+    /* ── PAGE TITLE ── */
+    .page-hero {
+      max-width: 1200px;
+      margin: 2.5rem auto 0;
+      padding: 0 1.5rem;
+    }
+    .page-eyebrow {
+      display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 1rem 1rem 0.5rem;
-    }
-
-    .card-head h2 {
-      margin: 0;
-      font-size: 1.1rem;
-      color: var(--azul-logo);
-    }
-
-    .card-body { padding: 0.8rem 1rem 1rem; }
-
-    .field-wrap { margin-bottom: 0.75rem; }
-
-    label {
-      display: block;
-      font-size: 0.9rem;
-      margin-bottom: 0.35rem;
-      color: #334155;
+      color: var(--dorado);
+      font-size: 0.73rem;
       font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+    .page-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      color: var(--azul-os);
+      line-height: 1.1;
+      margin-bottom: 0.5rem;
+    }
+    .page-title span { color: var(--dorado); font-style: italic; }
+    .page-divider {
+      width: 48px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--azul), var(--dorado));
+      border-radius: 99px;
+      margin: 1.25rem 0 2rem;
     }
 
-    .field {
-      width: 100%;
-      border: 2px solid #e2e8f0;
-      background: white;
-      border-radius: 0.75rem;
-      padding: 0.7rem 0.75rem;
-      outline: none;
-      font-family: inherit;
-    }
-
-    .field:focus {
-      border-color: var(--azul-logo);
-      box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.15);
-    }
-
-    .preview {
-      border: 2px dashed #cbd5e1;
-      border-radius: 0.8rem;
-      height: 180px;
+    /* ── LAYOUT ── */
+    .main-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem 3rem;
       display: grid;
-      place-items: center;
-      background: #f8fafc;
+      grid-template-columns: 380px 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .main-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── CARDS ── */
+    .panel {
+      background: var(--blanco);
+      border: 1px solid var(--borde);
+      border-radius: 1.25rem;
+      box-shadow: 0 4px 20px rgba(30, 58, 138, 0.07);
       overflow: hidden;
     }
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 1.5rem 1rem;
+      border-bottom: 1px solid var(--borde);
+      gap: 0.75rem;
+    }
+    .panel-header-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--azul-os);
+    }
+    .panel-body { padding: 1.25rem 1.5rem 1.5rem; }
 
-    .preview img {
+    /* ── FORM ── */
+    .field-group { margin-bottom: 1rem; }
+    .field-label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #334155;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+    .field-input {
+      width: 100%;
+      border: 1.5px solid var(--borde);
+      background: var(--blanco);
+      border-radius: 0.75rem;
+      padding: 0.7rem 0.9rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.92rem;
+      color: var(--texto);
+      outline: none;
+      transition: border-color 0.18s, box-shadow 0.18s;
+    }
+    .field-input:focus {
+      border-color: var(--azul);
+      box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.12);
+    }
+    input[type="color"].field-input {
+      height: 46px;
+      padding: 0.3rem 0.5rem;
+      cursor: pointer;
+    }
+    .field-hint {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 0.35rem;
+    }
+
+    /* ── PREVIEW ── */
+    .preview-box {
+      border: 2px dashed var(--borde);
+      border-radius: 0.9rem;
+      height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--fondo);
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+    .preview-box img {
       width: 100%;
       height: 100%;
       object-fit: contain;
-      background: white;
     }
-
-    .hint {
-      margin: 0.5rem 0 0;
-      font-size: 0.82rem;
-      color: var(--muted);
+    .preview-placeholder {
+      font-size: 0.85rem;
+      color: #CBD5E1;
+      text-align: center;
+      padding: 1rem;
     }
+    .preview-placeholder i { display: block; font-size: 2rem; margin-bottom: 0.5rem; }
 
+    /* ── FEEDBACK ── */
     .feedback {
-      border-radius: 0.75rem;
-      padding: 0.65rem 0.8rem;
-      font-size: 0.92rem;
-      margin-bottom: 0.75rem;
       display: none;
+      border-radius: 0.75rem;
+      padding: 0.7rem 0.9rem;
+      font-size: 0.88rem;
+      font-weight: 500;
+      margin-bottom: 1rem;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .feedback.ok  { display: flex; color: var(--ok);  background: var(--ok-bg);  border: 1px solid var(--ok-border); }
+    .feedback.err { display: flex; color: var(--err); background: var(--err-bg); border: 1px solid var(--err-border); }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      border: none;
+      border-radius: 0.75rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.18s, box-shadow 0.18s, opacity 0.18s;
+      text-decoration: none;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none !important; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--azul), var(--azul-os));
+      color: var(--dorado-c);
+      padding: 0.75rem 1.3rem;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 12px rgba(30, 64, 175, 0.25);
+    }
+    .btn-primary:hover { box-shadow: 0 6px 16px rgba(30, 64, 175, 0.35); }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1.5px solid var(--borde);
+      color: var(--muted);
+      padding: 0.7rem 1rem;
+      font-size: 0.85rem;
+    }
+    .btn-ghost:hover { background: var(--fondo); border-color: #CBD5E1; }
+
+    .btn-danger {
+      background: #FEF2F2;
+      border: 1.5px solid #FECACA;
+      color: #DC2626;
+      padding: 0.7rem 1rem;
+      font-size: 0.85rem;
+    }
+    .btn-danger:hover { background: #FEE2E2; }
+
+    .btn-sm {
+      padding: 0.45rem 0.85rem;
+      font-size: 0.78rem;
+      border-radius: 0.55rem;
     }
 
-    .feedback.ok {
-      display: block;
-      color: var(--ok);
-      background: var(--ok-bg);
-      border: 1px solid var(--ok-border);
+    .form-actions {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-top: 1.25rem;
     }
 
-    .feedback.error {
-      display: block;
-      color: var(--err);
-      background: var(--err-bg);
-      border: 1px solid var(--err-border);
+    /* ── TABLE ── */
+    .count-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: #DBEAFE;
+      color: var(--azul);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.25rem 0.75rem;
+      border-radius: 99px;
     }
 
-    .table-wrap {
-      width: 100%;
+    .table-scroll {
       overflow-x: auto;
-      border-radius: 0.8rem;
-      border: 1px solid #e2e8f0;
+      border-radius: 0.75rem;
+      border: 1px solid var(--borde);
     }
-
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 620px;
-      background: white;
+      min-width: 540px;
     }
-
-    th, td {
+    thead th {
+      background: var(--fondo);
+      padding: 0.7rem 1rem;
       text-align: left;
-      padding: 0.7rem 0.75rem;
-      border-bottom: 1px solid #f1f5f9;
-      font-size: 0.92rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 1px solid var(--borde);
     }
-
-    th {
-      color: #334155;
-      background: #f8fafc;
-      position: sticky;
-      top: 0;
+    tbody td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #F8FAFF;
+      font-size: 0.88rem;
+      vertical-align: middle;
     }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: #F8FAFF; }
 
-    .party-line {
+    .party-row {
       display: flex;
       align-items: center;
-      gap: 0.6rem;
+      gap: 0.75rem;
     }
-
     .party-thumb {
-      width: 38px;
-      height: 38px;
-      border-radius: 0.55rem;
+      width: 40px;
+      height: 40px;
+      border-radius: 0.6rem;
       object-fit: cover;
-      border: 1px solid #e2e8f0;
-      background: #f8fafc;
+      border: 1px solid var(--borde);
       flex-shrink: 0;
     }
-
-    .party-icon {
-      width: 38px;
-      height: 38px;
-      border-radius: 0.55rem;
-      display: grid;
-      place-items: center;
-      font-size: 1.1rem;
-      border: 1px solid #e2e8f0;
-      background: #f8fafc;
-      flex-shrink: 0;
-    }
-
-    .chip {
-      border-radius: 999px;
-      padding: 0.2rem 0.5rem;
-      font-size: 0.8rem;
-      border: 1px solid #e2e8f0;
-      color: #475569;
-      background: #fff;
-      display: inline-block;
-    }
-
-    .inline-actions {
+    .party-icon-box {
+      width: 40px;
+      height: 40px;
+      border-radius: 0.6rem;
+      border: 1px solid var(--borde);
       display: flex;
-      gap: 0.4rem;
-      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      background: var(--fondo);
+      flex-shrink: 0;
     }
-
-    .small {
-      font-size: 0.8rem;
-      padding: 0.4rem 0.55rem;
-      border-radius: 0.55rem;
+    .party-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.92rem;
       font-weight: 700;
+      color: var(--texto);
+      line-height: 1.2;
     }
-
-    .empty {
-      text-align: center;
+    .party-candidate {
+      font-size: 0.78rem;
       color: var(--muted);
-      padding: 2rem 1rem;
+      margin-top: 0.1rem;
     }
+    .color-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 99px;
+      border: 1px solid var(--borde);
+      font-size: 0.75rem;
+      color: var(--muted);
+      background: var(--blanco);
+    }
+    .color-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .row-actions { display: flex; gap: 0.4rem; }
+    .empty-row {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--muted);
+    }
+    .empty-row i { display: block; font-size: 2rem; opacity: 0.3; margin-bottom: 0.6rem; }
 
-    @media (max-width: 980px) {
-      .grid { grid-template-columns: 1fr; }
+    /* ── FOOTER ── */
+    .site-footer {
+      background: var(--blanco);
+      border-top: 3px solid var(--dorado);
+      padding: 1.25rem;
+      text-align: center;
     }
+    .footer-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--azul-os);
+    }
+    .footer-sub { font-size: 0.72rem; color: var(--muted); margin-top: 0.25rem; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header class="topbar">
-      <div class="title">
-        <img src="logo%20ctpq.png" alt="Logo CTPQ">
+
+  <!-- ── HEADER ── -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <img src="logo%20ctpq.png" alt="Logo CTPQ" class="header-logo">
         <div>
-          <h1>Gestor de Partidos CTPQ</h1>
-          <p class="subtitle">Crear, editar y eliminar partidos para la votacion del CTPQ.</p>
+          <div class="header-title">Colegio Técnico Profesional de Quepos</div>
+          <span class="header-badge">
+            <i class="fas fa-cog" style="font-size:0.6rem;"></i>
+            Panel de Administración
+          </span>
         </div>
       </div>
-      <div class="actions">
-        <a href="dashboard.html" class="btn btn-secondary"><i class="fa-solid fa-chart-line"></i>Dashboard</a>
-        <a href="index.html" class="btn btn-secondary"><i class="fa-solid fa-vote-yea"></i>Votacion CTPQ</a>
-      </div>
-    </header>
-
-    <div class="grid">
-      <section class="card">
-        <div class="card-head">
-          <h2 id="form-title">Nuevo partido</h2>
-          <button id="reset-btn" class="btn btn-secondary small" type="button"><i class="fa-solid fa-rotate-left"></i>Limpiar</button>
-        </div>
-        <div class="card-body">
-          <div id="feedback" class="feedback"></div>
-
-          <form id="party-form">
-            <input type="hidden" id="party-id">
-
-            <div class="field-wrap">
-              <label for="party-name">Nombre del partido</label>
-              <input id="party-name" class="field" type="text" maxlength="120" required>
-            </div>
-
-            <div class="field-wrap">
-              <label for="party-candidate">Candidato/a</label>
-              <input id="party-candidate" class="field" type="text" maxlength="120" required>
-            </div>
-
-            <div class="field-wrap">
-              <label for="party-color">Color</label>
-              <input id="party-color" class="field" type="color" value="#1E40AF">
-            </div>
-
-            <div class="field-wrap">
-              <label for="party-icon">Icono o URL (opcional)</label>
-              <input id="party-icon" class="field" type="text" placeholder="⭐ o https://...">
-            </div>
-
-            <div class="field-wrap">
-              <label for="party-image">Subir foto/logo</label>
-              <input id="party-image" class="field" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml">
-              <p class="hint">Si subes imagen, se usa como icono del partido.</p>
-            </div>
-
-            <div class="preview" id="image-preview">
-              <span style="color:#94a3b8;font-size:0.9rem;">Sin imagen seleccionada</span>
-            </div>
-
-            <div style="display:flex; gap:0.5rem; margin-top:0.9rem; flex-wrap:wrap;">
-              <button id="save-btn" class="btn btn-primary" type="submit"><i class="fa-solid fa-floppy-disk"></i>Guardar</button>
-              <button id="delete-btn" class="btn btn-danger" type="button" disabled><i class="fa-solid fa-trash"></i>Eliminar</button>
-            </div>
-          </form>
-        </div>
-      </section>
-
-      <section class="card">
-        <div class="card-head">
-          <h2>Partidos registrados</h2>
-          <span id="count-chip" class="chip">0 partidos</span>
-        </div>
-        <div class="card-body">
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Partido</th>
-                  <th>Candidato/a</th>
-                  <th>Color</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody id="party-tbody">
-                <tr><td colspan="4" class="empty">Cargando partidos...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
+      <nav class="header-nav">
+        <a href="dashboard.html" class="btn-nav"><i class="fas fa-chart-line"></i> Dashboard</a>
+        <a href="index.html" class="btn-nav"><i class="fas fa-vote-yea"></i> Votación</a>
+      </nav>
     </div>
+  </header>
+
+  <!-- ── PAGE HERO ── -->
+  <div class="page-hero">
+    <div class="page-eyebrow"><i class="fas fa-flag"></i> Gestión electoral</div>
+    <h1 class="page-title">Gestor de <span>Partidos</span></h1>
+    <div class="page-divider"></div>
   </div>
+
+  <!-- ── MAIN GRID ── -->
+  <div class="main-grid">
+
+    <!-- Formulario -->
+    <section class="panel">
+      <div class="panel-header">
+        <span class="panel-header-title" id="form-title">Nuevo partido</span>
+        <button id="reset-btn" class="btn btn-ghost btn-sm" type="button">
+          <i class="fas fa-rotate-left"></i> Limpiar
+        </button>
+      </div>
+      <div class="panel-body">
+
+        <div id="feedback" class="feedback"></div>
+
+        <form id="party-form">
+          <input type="hidden" id="party-id">
+
+          <div class="field-group">
+            <label class="field-label" for="party-name">Nombre del partido</label>
+            <input id="party-name" class="field-input" type="text" maxlength="120" placeholder="Ej. Frente Estudiantil" required>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="party-candidate">Candidato / a</label>
+            <input id="party-candidate" class="field-input" type="text" maxlength="120" placeholder="Nombre completo" required>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="party-color">Color representativo</label>
+            <input id="party-color" class="field-input" type="color" value="#1E40AF">
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="party-icon">Emoji o URL de icono <span style="font-weight:400;text-transform:none;letter-spacing:0;">(opcional)</span></label>
+            <input id="party-icon" class="field-input" type="text" placeholder="⭐  o  https://...">
+            <p class="field-hint"><i class="fas fa-info-circle"></i> También puedes subir una imagen abajo.</p>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="party-image">Subir foto / logo</label>
+            <input id="party-image" class="field-input" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml">
+            <p class="field-hint">Máximo 1.5 MB. Si subes imagen, reemplaza el emoji.</p>
+            <div class="preview-box" id="image-preview">
+              <div class="preview-placeholder">
+                <i class="fas fa-image"></i>
+                Sin imagen seleccionada
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button id="save-btn" class="btn btn-primary" type="submit">
+              <i class="fas fa-floppy-disk"></i> Guardar
+            </button>
+            <button id="delete-btn" class="btn btn-danger" type="button" disabled>
+              <i class="fas fa-trash"></i> Eliminar
+            </button>
+          </div>
+        </form>
+
+      </div>
+    </section>
+
+    <!-- Tabla -->
+    <section class="panel">
+      <div class="panel-header">
+        <span class="panel-header-title">Partidos registrados</span>
+        <span id="count-chip" class="count-badge"><i class="fas fa-layer-group"></i> 0 partidos</span>
+      </div>
+      <div class="panel-body" style="padding-top:0.75rem;">
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Partido</th>
+                <th>Color</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="party-tbody">
+              <tr>
+                <td colspan="3">
+                  <div class="empty-row">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    Cargando partidos...
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <footer class="site-footer">
+    <div class="footer-title">Sistema Electoral · CTPQ 2026</div>
+    <div class="footer-sub">Diseñado por <strong>Greikol Q.A</strong></div>
+  </footer>
 
   <script type="module">
     if (!localStorage.getItem('loggedIn')) {
@@ -415,281 +578,194 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtkdXZ5Y2NwcnJ0dWl0ZG5nY2luIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2NzMzOTYsImV4cCI6MjA5MzI0OTM5Nn0.IASwy18W9WSnqe6J9uRnQP5Jh61NI68VuT0oVDB8Jh8';
     const supabase = globalThis.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const form = document.getElementById('party-form');
-    const feedback = document.getElementById('feedback');
-    const formTitle = document.getElementById('form-title');
-    const saveBtn = document.getElementById('save-btn');
-    const deleteBtn = document.getElementById('delete-btn');
-    const resetBtn = document.getElementById('reset-btn');
-    const partyIdField = document.getElementById('party-id');
-    const partyNameField = document.getElementById('party-name');
-    const partyCandidateField = document.getElementById('party-candidate');
-    const partyColorField = document.getElementById('party-color');
-    const partyIconField = document.getElementById('party-icon');
-    const partyImageField = document.getElementById('party-image');
-    const imagePreview = document.getElementById('image-preview');
-    const tbody = document.getElementById('party-tbody');
-    const countChip = document.getElementById('count-chip');
+    const form           = document.getElementById('party-form');
+    const feedback       = document.getElementById('feedback');
+    const formTitle      = document.getElementById('form-title');
+    const saveBtn        = document.getElementById('save-btn');
+    const deleteBtn      = document.getElementById('delete-btn');
+    const resetBtn       = document.getElementById('reset-btn');
+    const partyIdField   = document.getElementById('party-id');
+    const nameField      = document.getElementById('party-name');
+    const candidateField = document.getElementById('party-candidate');
+    const colorField     = document.getElementById('party-color');
+    const iconField      = document.getElementById('party-icon');
+    const imageField     = document.getElementById('party-image');
+    const imagePreview   = document.getElementById('image-preview');
+    const tbody          = document.getElementById('party-tbody');
+    const countChip      = document.getElementById('count-chip');
 
-    const state = {
-      partidos: []
-    };
+    let partidos = [];
 
-    function showFeedback(message, type) {
+    function showFeedback(msg, type) {
       feedback.className = 'feedback ' + type;
-      feedback.textContent = message;
+      feedback.innerHTML = '<i class="fas ' + (type === 'ok' ? 'fa-check-circle' : 'fa-circle-xmark') + '"></i>' + msg;
     }
+    function clearFeedback() { feedback.className = 'feedback'; feedback.innerHTML = ''; }
 
-    function clearFeedback() {
-      feedback.className = 'feedback';
-      feedback.textContent = '';
-    }
-
-    function isImageValue(value) {
-      return /^data:image\//i.test(value)
-        || /^https?:\/\//i.test(value)
-        || value.includes('/')
-        || /\.(png|jpe?g|gif|webp|svg)$/i.test(value);
+    function isImg(v) {
+      return /^data:image\//i.test(v) || /^https?:\/\//i.test(v) || v.includes('/') || /\.(png|jpe?g|gif|webp|svg)$/i.test(v);
     }
 
     function renderPreview(value) {
       imagePreview.innerHTML = '';
       if (!value) {
-        imagePreview.innerHTML = '<span style="color:#94a3b8;font-size:0.9rem;">Sin imagen seleccionada</span>';
+        imagePreview.innerHTML = '<div class="preview-placeholder"><i class="fas fa-image"></i>Sin imagen seleccionada</div>';
         return;
       }
-
-      if (isImageValue(value)) {
-        const img = document.createElement('img');
-        img.src = value;
-        img.alt = 'Vista previa';
+      if (isImg(value)) {
+        const img = document.createElement('img'); img.src = value; img.alt = 'Vista previa';
         imagePreview.appendChild(img);
-        return;
+      } else {
+        imagePreview.innerHTML = '<span style="font-size:4rem;">' + value + '</span>';
       }
-
-      const badge = document.createElement('div');
-      badge.className = 'party-icon';
-      badge.textContent = value;
-      imagePreview.appendChild(badge);
     }
 
     function resetForm() {
-      partyIdField.value = '';
-      formTitle.textContent = 'Nuevo partido';
-      partyNameField.value = '';
-      partyCandidateField.value = '';
-      partyColorField.value = '#1E40AF';
-      partyIconField.value = '';
-      partyImageField.value = '';
-      deleteBtn.disabled = true;
-      saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i>Guardar';
-      renderPreview('');
-      clearFeedback();
+      partyIdField.value = ''; formTitle.textContent = 'Nuevo partido';
+      nameField.value = ''; candidateField.value = ''; colorField.value = '#1E40AF';
+      iconField.value = ''; imageField.value = ''; deleteBtn.disabled = true;
+      saveBtn.innerHTML = '<i class="fas fa-floppy-disk"></i> Guardar';
+      renderPreview(''); clearFeedback();
     }
 
     function fillForm(party) {
       partyIdField.value = String(party.id);
-      formTitle.textContent = 'Editar partido #' + party.id;
-      partyNameField.value = party.nombre || '';
-      partyCandidateField.value = party.candidato || '';
-      partyColorField.value = party.color || '#1E40AF';
-      partyIconField.value = party.icono || '';
-      partyImageField.value = '';
-      deleteBtn.disabled = false;
-      saveBtn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i>Actualizar';
-      renderPreview(party.icono || '');
-      clearFeedback();
+      formTitle.textContent = 'Editar partido';
+      nameField.value = party.nombre || '';
+      candidateField.value = party.candidato || '';
+      colorField.value = party.color || '#1E40AF';
+      iconField.value = party.icono || '';
+      imageField.value = ''; deleteBtn.disabled = false;
+      saveBtn.innerHTML = '<i class="fas fa-pen-to-square"></i> Actualizar';
+      renderPreview(party.icono || ''); clearFeedback();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function partyVisual(icono, color) {
-      if (icono && isImageValue(icono)) {
+      if (icono && isImg(icono)) {
         return '<img class="party-thumb" src="' + icono + '" alt="logo">';
       }
-      return '<div class="party-icon" style="color:' + (color || '#1E40AF') + '">' + (icono || '⭐') + '</div>';
+      return '<div class="party-icon-box" style="border-color:' + (color || '#1E40AF') + '33;">' + (icono || '⭐') + '</div>';
     }
 
     function renderTable() {
-      countChip.textContent = state.partidos.length + (state.partidos.length === 1 ? ' partido' : ' partidos');
+      const count = partidos.length;
+      countChip.innerHTML = '<i class="fas fa-layer-group"></i> ' + count + (count === 1 ? ' partido' : ' partidos');
 
-      if (!state.partidos.length) {
-        tbody.innerHTML = '<tr><td colspan="4" class="empty">No hay partidos creados todavía.</td></tr>';
+      if (!count) {
+        tbody.innerHTML = '<tr><td colspan="3"><div class="empty-row"><i class="fas fa-inbox"></i>No hay partidos creados todavía.</div></td></tr>';
         return;
       }
 
-      tbody.innerHTML = state.partidos.map((party) => (
-        '<tr>' +
-          '<td><div class="party-line">' +
-            partyVisual(party.icono, party.color) +
-            '<strong>' + (party.nombre || 'Sin nombre') + '</strong>' +
-          '</div></td>' +
-          '<td>' + (party.candidato || 'Sin candidato') + '</td>' +
-          '<td><span class="chip">' + (party.color || '#1E40AF') + '</span></td>' +
-          '<td><div class="inline-actions">' +
-            '<button class="btn btn-secondary small" type="button" data-action="edit" data-id="' + party.id + '"><i class="fa-solid fa-pen"></i>Editar</button>' +
-            '<button class="btn btn-danger small" type="button" data-action="delete" data-id="' + party.id + '"><i class="fa-solid fa-trash"></i>Borrar</button>' +
-          '</div></td>' +
-        '</tr>'
-      )).join('');
+      tbody.innerHTML = partidos.map(p => `
+        <tr>
+          <td>
+            <div class="party-row">
+              ${partyVisual(p.icono, p.color)}
+              <div>
+                <div class="party-name">${p.nombre || 'Sin nombre'}</div>
+                <div class="party-candidate"><i class="fas fa-user" style="margin-right:.3rem;font-size:.7rem;"></i>${p.candidato || 'Sin candidato'}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="color-chip">
+              <span class="color-dot" style="background:${p.color || '#1E40AF'};"></span>
+              ${p.color || '#1E40AF'}
+            </span>
+          </td>
+          <td>
+            <div class="row-actions">
+              <button class="btn btn-ghost btn-sm" type="button" data-action="edit" data-id="${p.id}">
+                <i class="fas fa-pen"></i> Editar
+              </button>
+              <button class="btn btn-danger btn-sm" type="button" data-action="delete" data-id="${p.id}">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>`).join('');
     }
 
     async function loadPartidos() {
       const { data, error } = await supabase
-        .from('partidos')
-        .select('id, nombre, candidato, icono, color')
-        .order('id', { ascending: true });
-
+        .from('partidos').select('id, nombre, candidato, icono, color').order('id', { ascending: true });
       if (error) {
-        console.error('Error al cargar partidos:', error);
-        showFeedback('No se pudieron cargar los partidos. Revisa permisos en Supabase.', 'error');
-        tbody.innerHTML = '<tr><td colspan="4" class="empty">Error al cargar datos.</td></tr>';
+        showFeedback('No se pudieron cargar los partidos.', 'err');
+        tbody.innerHTML = '<tr><td colspan="3"><div class="empty-row"><i class="fas fa-triangle-exclamation"></i>Error al cargar datos.</div></td></tr>';
         return;
       }
-
-      state.partidos = data || [];
+      partidos = data || [];
       renderTable();
     }
 
-    async function saveParty(event) {
-      event.preventDefault();
-      clearFeedback();
+    async function saveParty(e) {
+      e.preventDefault(); clearFeedback();
+      const id        = partyIdField.value.trim();
+      const nombre    = nameField.value.trim();
+      const candidato = candidateField.value.trim();
+      const color     = colorField.value;
+      const icono     = iconField.value.trim() || '⭐';
 
-      const id = partyIdField.value.trim();
-      const nombre = partyNameField.value.trim();
-      const candidato = partyCandidateField.value.trim();
-      const color = partyColorField.value;
-      const icono = partyIconField.value.trim() || '⭐';
-
-      if (!nombre || !candidato) {
-        showFeedback('Nombre y candidato son obligatorios.', 'error');
-        return;
-      }
-
+      if (!nombre || !candidato) { showFeedback('Nombre y candidato son obligatorios.', 'err'); return; }
       saveBtn.disabled = true;
 
       try {
         if (!id) {
-          const { error } = await supabase
-            .from('partidos')
-            .insert([{ nombre, candidato, color, icono }]);
-
-          if (error) {
-            console.error('Error al crear partido:', error);
-            showFeedback('No se pudo crear el partido. Verifica permisos en la tabla partidos.', 'error');
-            return;
-          }
-
-          showFeedback('Partido creado correctamente.', 'ok');
-          resetForm();
+          const { error } = await supabase.from('partidos').insert([{ nombre, candidato, color, icono }]);
+          if (error) { showFeedback('No se pudo crear el partido. Verifica permisos.', 'err'); return; }
+          showFeedback('¡Partido creado correctamente!', 'ok');
+          resetForm(); await loadPartidos();
+        } else {
+          const { error } = await supabase.from('partidos').update({ nombre, candidato, color, icono }).eq('id', Number(id));
+          if (error) { showFeedback('No se pudo actualizar el partido.', 'err'); return; }
+          showFeedback('Partido actualizado correctamente.', 'ok');
           await loadPartidos();
-          return;
         }
-
-        const { error } = await supabase
-          .from('partidos')
-          .update({ nombre, candidato, color, icono })
-          .eq('id', Number(id));
-
-        if (error) {
-          console.error('Error al actualizar partido:', error);
-          showFeedback('No se pudo actualizar el partido.', 'error');
-          return;
-        }
-
-        showFeedback('Partido actualizado correctamente.', 'ok');
-        await loadPartidos();
-      } catch (error) {
-        console.error('Error inesperado:', error);
-        showFeedback('Error inesperado al guardar.', 'error');
+      } catch(err) {
+        console.error(err); showFeedback('Error inesperado al guardar.', 'err');
       } finally {
         saveBtn.disabled = false;
       }
     }
 
     async function deleteParty(id) {
-      const party = state.partidos.find((item) => item.id === id);
-      const name = party ? party.nombre : 'este partido';
-      const ok = globalThis.confirm('Se va a eliminar ' + name + '. Esta accion no se puede deshacer.');
-      if (!ok) {
-        return;
-      }
-
+      const party = partidos.find(p => p.id === id);
+      if (!globalThis.confirm('¿Eliminar "' + (party?.nombre || 'este partido') + '"? Esta acción no se puede deshacer.')) return;
       try {
-        const { error } = await supabase
-          .from('partidos')
-          .delete()
-          .eq('id', id);
-
-        if (error) {
-          console.error('Error al eliminar partido:', error);
-          showFeedback('No se pudo eliminar el partido. Si tiene votos, elimina esos votos primero.', 'error');
-          return;
-        }
-
+        const { error } = await supabase.from('partidos').delete().eq('id', id);
+        if (error) { showFeedback('No se pudo eliminar. Si tiene votos, elimínalos primero.', 'err'); return; }
         showFeedback('Partido eliminado.', 'ok');
-        if (String(id) === partyIdField.value) {
-          resetForm();
-        }
+        if (String(id) === partyIdField.value) resetForm();
         await loadPartidos();
-      } catch (error) {
-        console.error('Error inesperado:', error);
-        showFeedback('Error inesperado al eliminar.', 'error');
+      } catch(err) {
+        console.error(err); showFeedback('Error inesperado al eliminar.', 'err');
       }
     }
 
-    partyImageField.addEventListener('change', (event) => {
-      const file = event.target.files && event.target.files[0];
-      if (!file) {
-        return;
-      }
-
-      if (file.size > 1.5 * 1024 * 1024) {
-        showFeedback('La imagen es muy pesada. Usa una de maximo 1.5 MB.', 'error');
-        partyImageField.value = '';
-        return;
-      }
-
+    imageField.addEventListener('change', e => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      if (file.size > 1.5 * 1024 * 1024) { showFeedback('Imagen demasiado grande. Máximo 1.5 MB.', 'err'); imageField.value = ''; return; }
       const reader = new FileReader();
-      reader.onload = () => {
-        const value = String(reader.result || '');
-        partyIconField.value = value;
-        renderPreview(value);
-        clearFeedback();
-      };
-      reader.onerror = () => {
-        showFeedback('No se pudo leer la imagen.', 'error');
-      };
+      reader.onload = () => { const v = String(reader.result || ''); iconField.value = v; renderPreview(v); clearFeedback(); };
+      reader.onerror = () => showFeedback('No se pudo leer la imagen.', 'err');
       reader.readAsDataURL(file);
     });
 
-    partyIconField.addEventListener('input', () => {
-      renderPreview(partyIconField.value.trim());
-    });
+    iconField.addEventListener('input', () => renderPreview(iconField.value.trim()));
 
-    tbody.addEventListener('click', async (event) => {
-      const button = event.target.closest('button[data-action]');
-      if (!button) {
-        return;
-      }
-
-      const action = button.dataset.action;
-      const id = Number(button.dataset.id);
-      const party = state.partidos.find((item) => item.id === id);
-
-      if (action === 'edit' && party) {
-        fillForm(party);
-      }
-
-      if (action === 'delete') {
-        await deleteParty(id);
-      }
+    tbody.addEventListener('click', async e => {
+      const btn = e.target.closest('button[data-action]');
+      if (!btn) return;
+      const id = Number(btn.dataset.id);
+      if (btn.dataset.action === 'edit') { const p = partidos.find(x => x.id === id); if (p) fillForm(p); }
+      if (btn.dataset.action === 'delete') await deleteParty(id);
     });
 
     deleteBtn.addEventListener('click', async () => {
       const id = Number(partyIdField.value);
-      if (!id) {
-        return;
-      }
-      await deleteParty(id);
+      if (id) await deleteParty(id);
     });
 
     resetBtn.addEventListener('click', resetForm);
