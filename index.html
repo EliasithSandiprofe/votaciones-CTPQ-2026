@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Votación Escuela Corea</title>
+    <link rel="icon" type="image/jpeg" href="logo.jpg?v=2">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.43.4"></script>
+    <style>
+        body { font-family: 'DM Sans', sans-serif; }
+        :root {
+            --azul-logo: #003D82;
+            --rojo-logo: #C60C30;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-white to-red-50 min-h-screen flex flex-col">
+    
+    <!-- Encabezado -->
+    <header class="bg-white shadow-md border-b-4 border-blue-800">
+        <div class="container mx-auto px-4 py-6 flex items-center justify-between">
+            <div class="flex items-center gap-6">
+                <img src="logo.jpg" alt="Logo Escuela" class="h-24 w-auto">
+                <div class="text-center md:text-left">
+                    <h1 class="text-2xl md:text-3xl font-extrabold uppercase tracking-wide leading-tight" style="color: #003D82;">
+                        Escuela República de Corea
+                    </h1>
+                    <div class="mt-2 inline-block">
+                        <p class="text-sm font-bold uppercase tracking-widest px-4 py-1 rounded-full" style="background: linear-gradient(135deg, #003D82 0%, #C60C30 100%); color: white;">
+                            Sistema de Votación Digital
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <a href="login.html" class="text-white font-bold py-2 px-4 rounded-xl text-sm transition shadow-md hover:shadow-lg" style="background-color: #003D82;">
+                Login
+            </a>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="flex-grow container mx-auto px-4 py-8">
+        
+        <!-- Título -->
+        <h1 class="text-2xl md:text-4xl lg:text-5xl font-extrabold text-center mb-10 leading-tight">
+            <span style="color: #003D82;">¡VOTA POR TU </span><span style="color: #C60C30;">CANDIDATO!</span>
+        </h1>
+        
+        <!-- Grid de Candidatos -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto" id="party-grid"></div>
+        <div id="party-empty" class="hidden max-w-3xl mx-auto mt-8 text-center bg-white rounded-2xl shadow-md border-2 border-dashed border-gray-200 p-8 text-gray-500">
+            No hay partidos creados todavía en la base de datos.
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t-4 py-4 text-center" style="border-color: #003D82;">
+        <p class="font-bold uppercase text-sm tracking-wide" style="color: #003D82;">
+            Sistema Electoral Escolar 2026
+        </p>
+        <p class="text-xs text-gray-500 mt-2">
+            Diseñado por <span class="font-semibold">Greikol Q.A</span>
+        </p>
+    </footer>
+
+    <!-- Modal de Confirmación -->
+    <div id="confirmModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-8 transform transition-all text-center">
+            <div class="mb-4 text-5xl" style="color: #003D82;">
+                <i class="fas fa-vote-yea"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">¿Confirmar voto?</h2>
+            <p class="text-gray-500 mb-8 px-4">
+                Estás a punto de votar por:<br>
+                <span id="partyName" class="font-bold text-xl block mt-2" style="color: #C60C30;"></span>
+            </p>
+            <div class="flex flex-col gap-3">
+                <button id="confirm-vote-btn"
+                        class="w-full text-white font-bold py-3 px-6 rounded-xl text-lg transition shadow-md" style="background-color: #003D82;">
+                    ¡Votar ahora!
+                </button>
+                <button id="close-modal-btn"
+                        class="w-full bg-gray-100 hover:bg-gray-200 text-gray-500 font-bold py-3 px-6 rounded-xl text-lg transition">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pantalla de Gracias -->
+        <button id="thanksScreen" 
+            class="hidden fixed inset-0 flex items-center justify-center z-50 cursor-pointer border-0 p-0" 
+            style="background: linear-gradient(135deg, #003D82 0%, #C60C30 100%);" 
+            type="button">
+        <div class="text-center px-4">
+            <div class="text-white text-9xl mb-6 animate-bounce">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2 class="text-5xl md:text-6xl font-extrabold text-white mb-4">¡Gracias!</h2>
+            <p class="text-2xl text-white font-medium mb-8">Tu voto ha sido registrado exitosamente</p>
+            <p class="text-lg text-white opacity-80 mt-8">
+                <i class="fas fa-hand-pointer mr-2"></i>Toca la pantalla para continuar
+            </p>
+        </div>
+    </button>
+
+    <script type="module">
+        // Inicializar Supabase
+        const { createClient } = globalThis.supabase;
+        const supabase = createClient(
+            'https://kduvyccprrtuitdngcin.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtkdXZ5Y2NwcnJ0dWl0ZG5nY2luIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2NzMzOTYsImV4cCI6MjA5MzI0OTM5Nn0.IASwy18W9WSnqe6J9uRnQP5Jh61NI68VuT0oVDB8Jh8'
+        );
+
+        const state = {
+            partidos: [],
+        };
+
+        let selectedParty = '';
+        let selectedPartyId = null;
+        let isVoting = false;
+
+        function renderPartidos(partidos) {
+            const grid = document.getElementById('party-grid');
+            const empty = document.getElementById('party-empty');
+            grid.innerHTML = '';
+
+            if (!partidos.length) {
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            empty.classList.add('hidden');
+
+            partidos.forEach((party) => {
+                const color = party.color || '#003D82';
+                const icon = party.icono || '⭐';
+                const isImage = icon.startsWith('http') || icon.includes('/') || /\.(png|jpe?g|gif|webp|svg)$/i.test(icon);
+                const iconMarkup = isImage
+                    ? `<img src="${icon}" alt="${party.nombre || 'icono'}" class="w-full h-full object-cover scale-150" style="transform-origin: center;">`
+                    : `<div class="text-6xl" style="color: ${color};">${icon}</div>`;
+                const nombre = party.nombre || 'Partido sin nombre';
+                const candidato = party.candidato || 'Sin candidato';
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-2xl shadow-md border-2 border-gray-100 p-4 transform transition hover:-translate-y-1 hover:shadow-lg flex flex-col items-center';
+                card.innerHTML = `
+                    <div class="w-full aspect-[4/3] rounded-xl overflow-hidden mb-4 bg-gray-200 flex items-center justify-center p-4" style="background: ${color}15;">
+                        ${iconMarkup}
+                    </div>
+                    <div class="flex items-center justify-center gap-2 mb-2 w-full">
+                        <h2 class="text-lg font-bold text-gray-800 uppercase tracking-tight text-center leading-tight">${nombre}</h2>
+                    </div>
+                    <p class="text-sm text-gray-500 text-center mb-4">${candidato}</p>
+                    <button type="button" class="vote-btn w-full text-white font-bold py-3 px-6 rounded-xl text-xl transition flex items-center justify-center gap-2 shadow-md hover:shadow-lg hover:opacity-90" style="background-color: #003D82;">
+                        VOTAR
+                        <i class="fas fa-check-circle ml-2"></i>
+                    </button>
+                `;
+                card.querySelector('.vote-btn').addEventListener('click', () => openModal(party.id, nombre));
+                grid.appendChild(card);
+            });
+        }
+
+        async function loadPartidos() {
+            const { data, error } = await supabase
+                .from('partidos')
+                .select('id, nombre, candidato, icono, color')
+                .order('id', { ascending: true });
+
+            if (error) {
+                console.error('Error al cargar partidos:', error);
+                renderPartidos([]);
+                return;
+            }
+
+            state.partidos = data || [];
+            renderPartidos(state.partidos);
+        }
+
+        function openModal(partyId, partyName) {
+            if (isVoting) return;
+            selectedPartyId = partyId;
+            selectedParty = partyName;
+            document.getElementById('partyName').textContent = partyName;
+            document.getElementById('confirmModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('confirmModal').classList.add('hidden');
+        }
+
+        async function confirmVote() {
+            if (isVoting) return;
+            isVoting = true;
+            document.getElementById('confirmModal').classList.add('hidden');
+            showThanksScreen();
+
+            try {
+                const { error } = await supabase
+                    .from('votos')
+                    .insert([{ partido_id: selectedPartyId }]);
+                
+                if (error) {
+                    console.error('Error al guardar voto:', error);
+                } else {
+                    console.log('Voto guardado exitosamente');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function showThanksScreen() {
+            const thanksScreen = document.getElementById('thanksScreen');
+            thanksScreen.classList.remove('hidden');
+        }
+
+        function resetSystem() {
+            document.getElementById('thanksScreen').classList.add('hidden');
+            isVoting = false;
+            selectedParty = '';
+            selectedPartyId = null;
+        }
+
+        document.getElementById('confirm-vote-btn').addEventListener('click', confirmVote);
+        document.getElementById('close-modal-btn').addEventListener('click', closeModal);
+        document.getElementById('thanksScreen').addEventListener('click', resetSystem);
+
+        await loadPartidos();
+    </script>
+</body>
+</html>

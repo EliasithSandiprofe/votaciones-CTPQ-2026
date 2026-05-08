@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resultados — Elecciones Estudiantiles</title>
+<link rel="icon" type="image/jpeg" href="logo.jpg?v=2">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.43.4/dist/umd/supabase.js"></script>
+<link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+
+<header>
+  <div style="display: flex; align-items: center; gap: 1rem; flex: 1;">
+    <img src="logo.jpg" alt="Logo" style="height: 60px; width: auto;">
+    <div>
+      <p class="eyebrow">📊 Resultados Oficiales 2025</p>
+      <h1>Elecciones <span>Estudiantiles</span></h1>
+    </div>
+  </div>
+  <div style="display:flex; gap: .5rem; flex-wrap: wrap;">
+    <a href="partidos.html" style="background-color: #003D82; color: white; padding: 0.75rem 1rem; border-radius: 0.5rem; text-decoration: none; font-weight: bold; font-size: 0.9rem; height: fit-content;">Gestionar partidos</a>
+    <button id="logout-btn" style="background-color: #C60C30; color: white; padding: 0.75rem 1.5rem; border-radius: 0.5rem; border: none; cursor: pointer; font-weight: bold; font-size: 0.9rem; height: fit-content; transition: background-color 0.2s;">Cerrar sesión</button>
+  </div>
+</header>
+
+<!-- Totals -->
+<div class="totals-bar" id="totals-bar"></div>
+
+<!-- Winner -->
+<div class="winner-banner" id="winner-banner"></div>
+
+<!-- Cards -->
+<div class="grid" id="cards-grid"></div>
+
+<!-- Horizontal bar chart -->
+<div class="chart-section">
+  <div class="section-title"><span>Distribución</span> de Votos</div>
+  <div class="hbar-list" id="hbar-list"></div>
+</div>
+
+<!-- Donut + table -->
+<div class="chart-section">
+  <div class="section-title"><span>Proporción</span> por partido</div>
+  <div class="donut-wrap">
+    <svg class="donut-svg" viewBox="0 0 160 160" id="donut-svg"></svg>
+    <div class="donut-legend" id="donut-legend"></div>
+  </div>
+</div>
+
+<!-- Results table -->
+<div class="chart-section">
+  <div class="section-title"><span>Tabla</span> de resultados</div>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Partido</th>
+        <th>Candidato/a</th>
+        <th>Votos</th>
+        <th>%</th>
+      </tr>
+    </thead>
+    <tbody id="results-table"></tbody>
+  </table>
+</div>
+
+<footer>
+  Resultados en vivo desde Supabase.
+</footer>
+
+<script type="module">
+if (!localStorage.getItem('loggedIn')) {
+  globalThis.location.href = 'login.html';
+}
+
+const SUPABASE_URL = 'https://kduvyccprrtuitdngcin.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtkdXZ5Y2NwcnJ0dWl0ZG5nY2luIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2NzMzOTYsImV4cCI6MjA5MzI0OTM5Nn0.IASwy18W9WSnqe6J9uRnQP5Jh61NI68VuT0oVDB8Jh8';
+const supabase = globalThis.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const schoolName = 'Escuela República de Corea';
+const electionDate = '1 de mayo, 2026';
+let parties = [];
+
+const state = {
+  votesByParty: {},
+  realtimeChannel: null
+};
+
+function buildPartiesWithVotes() {
+  return parties.map((party) => ({
+    ...party,
+    votes: state.votesByParty[party.id] || 0
+  }));
+}
+
+function pct(v, totalVotes) {
+  return totalVotes > 0 ? ((v / totalVotes) * 100).toFixed(1) : '0.0';
+}
+
+function clearSections() {
+  document.getElementById('totals-bar').innerHTML = '';
+  document.getElementById('winner-banner').innerHTML = '';
+  document.getElementById('cards-grid').innerHTML = '';
+  document.getElementById('hbar-list').innerHTML = '';
+  document.getElementById('donut-svg').innerHTML = '';
+  document.getElementById('donut-legend').innerHTML = '';
+  document.getElementById('results-table').innerHTML = '';
+}
+
+function renderDashboard() {
+  const partiesWithVotes = buildPartiesWithVotes();
+  const totalVotes = partiesWithVotes.reduce((sum, party) => sum + party.votes, 0);
+  const sorted = [...partiesWithVotes].sort((a, b) => b.votes - a.votes);
+  const winner = sorted[0];
+
+  clearSections();
+
+  const tb = document.getElementById('totals-bar');
+  [
+    ['🗳️', 'Total votos', totalVotes],
+    ['🏫', 'Institución', schoolName],
+    ['📅', 'Fecha', electionDate],
+    ['🎯', 'Partidos', partiesWithVotes.length]
+  ].forEach(([icon, label, val]) => {
+    tb.innerHTML += `<div class="stat-pill">${icon} ${label}: <strong>${val}</strong></div>`;
+  });
+
+  if (winner) {
+    document.getElementById('winner-banner').innerHTML = `
+      <div class="crown">🏆</div>
+      <div class="winner-label">Ganador</div>
+      <div class="winner-name">${winner.name}</div>
+      <div class="winner-votes">${winner.candidate} · ${winner.votes} votos (${pct(winner.votes, totalVotes)}%)</div>
+    `;
+  } else {
+    document.getElementById('winner-banner').innerHTML = `
+      <div class="winner-label">Sin votos registrados todavía</div>
+    `;
+  }
+
+  const grid = document.getElementById('cards-grid');
+  sorted.forEach((party, index) => {
+    const percentage = pct(party.votes, totalVotes);
+    const isWinner = index === 0;
+    const isImage = party.icon && (party.icon.startsWith('http') || party.icon.includes('/') || /\.(png|jpe?g|gif|webp|svg)$/i.test(party.icon));
+    const iconMarkup = isImage
+      ? `<img src="${party.icon}" alt="${party.name}" style="width: 2.8rem; height: 2.8rem; object-fit: contain;">`
+      : party.icon;
+    const card = document.createElement('div');
+    card.className = `card${isWinner ? ' winner-card' : ''}`;
+    card.innerHTML = `
+      <div class="card-accent-bar" style="background:${party.color}"></div>
+      <div class="card-glow" style="background:${party.color}"></div>
+      <div class="party-header">
+        <div class="party-icon" style="background:${party.color}22; color:${party.color}">${iconMarkup}</div>
+        <div>
+          <div class="party-name">${party.name}${isWinner ? ' 🏆' : ''}</div>
+          <div class="party-tag">${party.tag}</div>
+        </div>
+      </div>
+      <div class="vote-count" style="color:${party.color}">${party.votes.toLocaleString()}</div>
+      <div class="vote-label">votos totales</div>
+      <div class="bar-wrap" style="margin-top:1rem">
+        <div class="bar-fill" style="background:${party.color}; width:${percentage}%"></div>
+      </div>
+      <div class="pct-row">
+        <span class="pct-badge" style="background:${party.color}22; color:${party.color}">${percentage}%</span>
+        <span class="rank-badge">Posición #${index + 1}</span>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  const hbar = document.getElementById('hbar-list');
+  sorted.forEach((party) => {
+    const isImage = party.icon && (party.icon.startsWith('http') || party.icon.includes('/') || /\.(png|jpe?g|gif|webp|svg)$/i.test(party.icon));
+    const iconMarkup = isImage ? '' : party.icon;
+    hbar.innerHTML += `
+      <div class="hbar-row">
+        <div class="hbar-label">${iconMarkup ? `${iconMarkup} ` : ''}${party.name}</div>
+        <div class="hbar-track">
+          <div class="hbar-fill" style="background:${party.color}; width:${pct(party.votes, totalVotes)}%"></div>
+        </div>
+        <div class="hbar-val" style="color:${party.color}">${party.votes}</div>
+      </div>
+    `;
+  });
+
+  const cx = 80, cy = 80, r = 60, stroke = 22;
+  const circ = 2 * Math.PI * r;
+  let offset = 0;
+  const donut = document.getElementById('donut-svg');
+  donut.innerHTML = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#252840" stroke-width="${stroke}"/>`;
+
+  sorted.forEach((party) => {
+    const frac = totalVotes > 0 ? party.votes / totalVotes : 0;
+    const dash = frac * circ;
+    const gap = circ - dash;
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', cx);
+    circle.setAttribute('cy', cy);
+    circle.setAttribute('r', r);
+    circle.setAttribute('fill', 'none');
+    circle.setAttribute('stroke', party.color);
+    circle.setAttribute('stroke-width', stroke);
+    circle.setAttribute('stroke-dasharray', `${dash} ${gap}`);
+    circle.setAttribute('stroke-dashoffset', -(offset * circ - circ / 4));
+    circle.style.transition = 'stroke-dashoffset .8s ease';
+    donut.appendChild(circle);
+    offset += frac;
+  });
+
+  const legend = document.getElementById('donut-legend');
+  sorted.forEach((party) => {
+    legend.innerHTML += `
+      <div class="legend-item">
+        <div class="legend-dot" style="background:${party.color}"></div>
+        <span style="color:var(--muted)">${party.name}</span>
+        <strong style="margin-left:.3rem">${pct(party.votes, totalVotes)}%</strong>
+      </div>
+    `;
+  });
+
+  const tbody = document.getElementById('results-table');
+  sorted.forEach((party, index) => {
+    tbody.innerHTML += `
+      <tr>
+        <td><span style="color:var(--muted)">${index + 1}</span></td>
+        <td><span class="tbl-color" style="background:${party.color}"></span>${index === 0 ? `<span class="tbl-winner">${party.name}</span>` : party.name}</td>
+        <td style="color:var(--muted)">${party.candidate}</td>
+        <td><strong>${party.votes.toLocaleString()}</strong></td>
+        <td style="color:${party.color}">${pct(party.votes, totalVotes)}%</td>
+      </tr>
+    `;
+  });
+}
+
+async function loadResults() {
+  try {
+    const [partidosResponse, votosResponse] = await Promise.all([
+      supabase.from('partidos').select('id, nombre, candidato, icono, color').order('id', { ascending: true }),
+      supabase.from('votos').select('partido_id')
+    ]);
+
+    const { data: partidosData, error: partidosError } = partidosResponse;
+    const { data: votosData, error: votosError } = votosResponse;
+
+    if (partidosError) {
+      console.error('Error al cargar partidos:', partidosError);
+      return;
+    }
+
+    if (votosError) {
+      console.error('Error al cargar votos:', votosError);
+      return;
+    }
+
+    parties = (partidosData || []).map((party) => ({
+      id: party.id,
+      name: party.nombre,
+      candidate: party.candidato,
+      icon: party.icono || '⭐',
+      color: party.color || '#003D82',
+      tag: ''
+    }));
+
+    const counts = {};
+    parties.forEach((party) => {
+      counts[party.id] = 0;
+    });
+
+    (votosData || []).forEach((row) => {
+      if (row.partido_id in counts) {
+        counts[row.partido_id] += 1;
+      }
+    });
+
+    state.votesByParty = counts;
+    renderDashboard();
+  } catch (error) {
+    console.error('Error inesperado al cargar resultados:', error);
+  }
+}
+
+function startRealtimeUpdates() {
+  state.realtimeChannel = supabase
+    .channel('votos-live')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'votos' }, () => {
+      loadResults();
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'partidos' }, () => {
+      loadResults();
+    })
+    .subscribe();
+}
+
+await loadResults();
+startRealtimeUpdates();
+
+document.getElementById('logout-btn').addEventListener('click', function() {
+  localStorage.removeItem('loggedIn');
+  localStorage.removeItem('username');
+  localStorage.removeItem('role');
+  globalThis.location.href = 'index.html';
+});
+</script>
+</body>
+</html>
