@@ -310,6 +310,10 @@
             feedback.classList.remove('hidden');
         }
 
+        function normalizeCredential(value) {
+            return String(value ?? '').trim();
+        }
+
         async function trySupabaseLogin(username, password) {
             const { data, error } = await supabase
                 .from('usuarios')
@@ -322,11 +326,13 @@
             }
 
             const user = data?.[0];
-            if (!user || user.contraseña !== password) {
+            const dbPassword = normalizeCredential(user?.contraseña);
+            const inputPassword = normalizeCredential(password);
+            if (!user || dbPassword !== inputPassword) {
                 return { ok: false, source: 'supabase' };
             }
 
-            return { ok: true, username: user.nombre_usuario };
+            return { ok: true, username: normalizeCredential(user.nombre_usuario) };
         }
 
         form.addEventListener('submit', async (event) => {
@@ -336,8 +342,8 @@
             buttonText.textContent = 'Verificando...';
             buttonIcon.className = 'fa-solid fa-spinner fa-spin ml-2';
 
-            const username = form.username.value.trim();
-            const password = form.password.value;
+            const username = normalizeCredential(form.username.value);
+            const password = normalizeCredential(form.password.value);
 
             try {
                 let result = await trySupabaseLogin(username, password);
