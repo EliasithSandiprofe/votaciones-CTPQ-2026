@@ -444,10 +444,16 @@ header h1 span {
 }
 
 /* Table */
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.88rem;
+  min-width: 560px;
 }
 
 thead th {
@@ -571,5 +577,22 @@ footer {
   .hbar-val {
     width: auto;
     margin-left: auto;
+  }
+
+  .chart-section {
+    padding: 1rem;
+  }
+
+  .totals-bar {
+    gap: 0.5rem;
+  }
+
+  .stat-pill {
+    width: 100%;
+    border-radius: 0.7rem;
+  }
+
+  .winner-banner {
+    padding: 0.9rem 0.85rem;
   }
 }

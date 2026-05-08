@@ -394,6 +394,24 @@
         }
         .btn-cancel:hover { background: var(--fondo); }
 
+        .vote-feedback {
+            display: none;
+            margin-bottom: 0.9rem;
+            border-radius: 0.6rem;
+            padding: 0.6rem 0.75rem;
+            font-size: 0.83rem;
+            line-height: 1.35;
+            text-align: left;
+            border: 1px solid transparent;
+        }
+
+        .vote-feedback.error {
+            display: block;
+            background: #fff1f2;
+            border-color: #fecdd3;
+            color: #9f1239;
+        }
+
         /* ── THANKS SCREEN ── */
         .thanks-screen {
             position: fixed;
@@ -445,6 +463,49 @@
             font-size: 0.82rem;
             color: rgba(255,255,255,0.50);
             letter-spacing: 0.05em;
+        }
+
+        @media (max-width: 900px) {
+            .header-inner {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.9rem;
+            }
+
+            .btn-login {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .header-inner,
+            .hero,
+            .cards-section {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+
+            .header-logo {
+                height: 58px;
+            }
+
+            .header-badge {
+                font-size: 0.62rem;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .modal-box {
+                padding: 1.5rem 1.2rem;
+            }
+
+            .thanks-sub {
+                font-size: 0.95rem;
+            }
         }
     </style>
 </head>
@@ -507,8 +568,9 @@
             <div class="modal-title">¿Confirmar voto?</div>
             <p class="modal-desc">Estás a punto de votar por:</p>
             <span id="partyName" class="modal-party"></span>
+            <p id="vote-feedback" class="vote-feedback"></p>
             <button id="confirm-vote-btn" class="btn-confirm">
-                <i class="fas fa-check mr-2"></i> Confirmar voto
+                <i class="fas fa-check"></i> Confirmar voto
             </button>
             <button id="close-modal-btn" class="btn-cancel">Cancelar</button>
         </div>
@@ -534,6 +596,28 @@
         let selectedParty = '';
         let selectedPartyId = null;
         let isVoting = false;
+
+        const confirmBtn = document.getElementById('confirm-vote-btn');
+        const closeBtn = document.getElementById('close-modal-btn');
+        const voteFeedback = document.getElementById('vote-feedback');
+
+        function showVoteFeedback(message) {
+            voteFeedback.textContent = message;
+            voteFeedback.className = 'vote-feedback error';
+        }
+
+        function clearVoteFeedback() {
+            voteFeedback.textContent = '';
+            voteFeedback.className = 'vote-feedback';
+        }
+
+        function setVoteButtons(isBusy) {
+            confirmBtn.disabled = isBusy;
+            closeBtn.disabled = isBusy;
+            confirmBtn.innerHTML = isBusy
+                ? '<i class="fas fa-spinner fa-spin"></i> Registrando...'
+                : '<i class="fas fa-check"></i> Confirmar voto';
+        }
 
         function renderPartidos(partidos) {
             const grid = document.getElementById('party-grid');
@@ -592,6 +676,8 @@
             selectedPartyId = partyId;
             selectedParty   = partyName;
             document.getElementById('partyName').textContent = partyName;
+            clearVoteFeedback();
+            setVoteButtons(false);
             document.getElementById('confirmModal').style.display = 'flex';
         }
 
@@ -600,14 +686,29 @@
         }
 
         async function confirmVote() {
-            if (isVoting) return;
+            if (isVoting || !selectedPartyId) return;
             isVoting = true;
-            closeModal();
-            document.getElementById('thanksScreen').style.display = 'flex';
+            clearVoteFeedback();
+            setVoteButtons(true);
+
             try {
                 const { error } = await supabase.from('votos').insert([{ partido_id: selectedPartyId }]);
-                if (error) console.error('Error al guardar voto:', error);
-            } catch (e) { console.error(e); }
+                if (error) {
+                    console.error('Error al guardar voto:', error);
+                    throw new Error('insert-failed');
+                }
+
+                closeModal();
+                document.getElementById('thanksScreen').style.display = 'flex';
+            } catch (e) {
+                console.error(e);
+                isVoting = false;
+                showVoteFeedback('No se pudo registrar el voto. Revisa la conexión e inténtalo otra vez.');
+            } finally {
+                if (!isVoting) {
+                    setVoteButtons(false);
+                }
+            }
         }
 
         function resetSystem() {

@@ -55,18 +55,20 @@
   <!-- Results table -->
   <div class="chart-section">
     <div class="section-title"><span>Tabla</span> de resultados</div>
-    <table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Partido</th>
-          <th>Candidato/a</th>
-          <th>Votos</th>
-          <th>%</th>
-        </tr>
-      </thead>
-      <tbody id="results-table"></tbody>
-    </table>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Partido</th>
+            <th>Candidato/a</th>
+            <th>Votos</th>
+            <th>%</th>
+          </tr>
+        </thead>
+        <tbody id="results-table"></tbody>
+      </table>
+    </div>
   </div>
 </main>
 
@@ -92,7 +94,9 @@ let parties = [];
 
 const state = {
   votesByParty: {},
-  realtimeChannel: null
+  realtimeChannel: null,
+  isLoading: false,
+  hasPendingReload: false
 };
 
 const tooltip = document.getElementById('chart-tooltip');
@@ -289,6 +293,13 @@ function renderDashboard() {
 }
 
 async function loadResults() {
+  if (state.isLoading) {
+    state.hasPendingReload = true;
+    return;
+  }
+
+  state.isLoading = true;
+
   try {
     const [partidosResponse, votosResponse] = await Promise.all([
       supabase.from('partidos').select('id, nombre, candidato, icono, color').order('id', { ascending: true }),
@@ -332,6 +343,13 @@ async function loadResults() {
     renderDashboard();
   } catch (error) {
     console.error('Error inesperado al cargar resultados:', error);
+  } finally {
+    state.isLoading = false;
+
+    if (state.hasPendingReload) {
+      state.hasPendingReload = false;
+      loadResults();
+    }
   }
 }
 

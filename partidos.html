@@ -171,6 +171,34 @@
       align-items: center;
       justify-content: space-between;
       padding: 1.25rem 1.5rem 1rem;
+      @media (max-width: 640px) {
+        .header-inner,
+        .page-hero,
+        .main-grid {
+          padding-left: 1rem;
+          padding-right: 1rem;
+        }
+
+        .header-inner {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.75rem;
+        }
+
+        .header-nav {
+          width: 100%;
+        }
+
+        .btn-nav {
+          flex: 1;
+          justify-content: center;
+        }
+
+        .panel-header,
+        .panel-body {
+          padding: 1rem;
+        }
+      }
       border-bottom: 1px solid var(--borde);
       gap: 0.75rem;
     }
