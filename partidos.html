@@ -12,11 +12,10 @@
   <style>
     :root {
       --azul-logo:  #1E40AF;
-      --rojo-logo:  #DC2626;
-      --ambar:      #D97706;
-      --esmeralda:  #059669;
-      --violeta:    #7C3AED;
-      --fondo:      #F0FDF4;
+      --azul-os:    #1e3a8a;
+      --dorado:     #B8860B;
+      --dorado-c:   #F5C518;
+      --fondo:      #EFF3FF;
       --surface:    #ffffff;
       --text:       #1e293b;
       --muted:      #64748b;
@@ -35,9 +34,9 @@
       font-family: 'Fredoka', sans-serif;
       color: var(--text);
       background:
-        radial-gradient(circle at top right, rgba(5, 150, 105, 0.10), transparent 33%),
-        radial-gradient(circle at bottom left, rgba(217, 119, 6, 0.10), transparent 30%),
-        linear-gradient(140deg, var(--fondo) 0%, #ffffff 45%, #fffbeb 100%);
+        radial-gradient(circle at top right, rgba(30, 64, 175, 0.10), transparent 33%),
+        radial-gradient(circle at bottom left, rgba(184, 134, 11, 0.08), transparent 30%),
+        linear-gradient(140deg, var(--fondo) 0%, #ffffff 50%, #FEFBEA 100%);
       min-height: 100vh;
     }
 
@@ -112,13 +111,13 @@
     .btn:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
 
     .btn-primary {
-      color: white;
-      background: linear-gradient(135deg, var(--esmeralda), var(--azul-logo));
+      color: var(--dorado-c);
+      background: linear-gradient(135deg, var(--azul-logo), var(--azul-os));
     }
 
     .btn-secondary {
-      color: var(--esmeralda);
-      background: #d1fae5;
+      color: var(--azul-logo);
+      background: #dbeafe;
     }
 
     .btn-danger {
@@ -176,8 +175,8 @@
     }
 
     .field:focus {
-      border-color: var(--esmeralda);
-      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+      border-color: var(--azul-logo);
+      box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.15);
     }
 
     .preview {
@@ -355,7 +354,7 @@
 
             <div class="field-wrap">
               <label for="party-color">Color</label>
-              <input id="party-color" class="field" type="color" value="#059669">
+              <input id="party-color" class="field" type="color" value="#1E40AF">
             </div>
 
             <div class="field-wrap">
@@ -479,7 +478,7 @@
       formTitle.textContent = 'Nuevo partido';
       partyNameField.value = '';
       partyCandidateField.value = '';
-      partyColorField.value = '#059669';
+      partyColorField.value = '#1E40AF';
       partyIconField.value = '';
       partyImageField.value = '';
       deleteBtn.disabled = true;
@@ -493,7 +492,7 @@
       formTitle.textContent = 'Editar partido #' + party.id;
       partyNameField.value = party.nombre || '';
       partyCandidateField.value = party.candidato || '';
-      partyColorField.value = party.color || '#059669';
+      partyColorField.value = party.color || '#1E40AF';
       partyIconField.value = party.icono || '';
       partyImageField.value = '';
       deleteBtn.disabled = false;
@@ -506,7 +505,7 @@
       if (icono && isImageValue(icono)) {
         return '<img class="party-thumb" src="' + icono + '" alt="logo">';
       }
-      return '<div class="party-icon" style="color:' + (color || '#059669') + '">' + (icono || '⭐') + '</div>';
+      return '<div class="party-icon" style="color:' + (color || '#1E40AF') + '">' + (icono || '⭐') + '</div>';
     }
 
     function renderTable() {
@@ -524,7 +523,7 @@
             '<strong>' + (party.nombre || 'Sin nombre') + '</strong>' +
           '</div></td>' +
           '<td>' + (party.candidato || 'Sin candidato') + '</td>' +
-          '<td><span class="chip">' + (party.color || '#059669') + '</span></td>' +
+          '<td><span class="chip">' + (party.color || '#1E40AF') + '</span></td>' +
           '<td><div class="inline-actions">' +
             '<button class="btn btn-secondary small" type="button" data-action="edit" data-id="' + party.id + '"><i class="fa-solid fa-pen"></i>Editar</button>' +
             '<button class="btn btn-danger small" type="button" data-action="delete" data-id="' + party.id + '"><i class="fa-solid fa-trash"></i>Borrar</button>' +

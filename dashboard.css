@@ -1,20 +1,19 @@
 :root {
-    /* Paleta CTPQ — Coolors + FlatUI Colors + Happyhues */
-    --bg:         #F0FDF4;  /* Fondo esmeralda muy suave */
-    --surface:    #ffffff;
-    --border:     #D1FAE5;  /* Borde esmeralda claro */
-    --text:       #1E3A8A;  /* Azul institucional */
-    --muted:      #64748B;
-    --accent:     #D97706;  /* Ámbar — reemplaza el rojo como acento */
-    --rojo:       #DC2626;  /* Rojo CTPQ (para ganadores/alertas) */
-    --esmeralda:  #059669;
-    --violeta:    #7C3AED;
-    --ambar:      #D97706;
+    /* Paleta CTPQ — Blanco, Azul y Dorado */
+    --bg:       #EFF3FF;  /* Fondo azul muy tenue */
+    --surface:  #ffffff;
+    --border:   #DBEAFE;  /* Borde azul claro */
+    --text:     #1E3A8A;  /* Azul oscuro */
+    --muted:    #64748B;
+    --accent:   #B8860B;  /* Dorado elegante */
+    --dorado-c: #F5C518;  /* Dorado brillante */
+    --azul:     #1E40AF;
+    --azul-os:  #1e3a8a;
 
     --p1: #1E40AF; /* Partido 1 - azul */
-    --p2: #DC2626; /* Partido 2 - rojo */
-    --p3: #059669; /* Partido 3 - esmeralda */
-    --p4: #7C3AED; /* Partido 4 - violeta */
+    --p2: #B8860B; /* Partido 2 - dorado */
+    --p3: #1e3a8a; /* Partido 3 - azul oscuro */
+    --p4: #2563EB; /* Partido 4 - azul medio */
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -35,7 +34,7 @@
     margin-bottom: 3rem;
     position: relative;
     background: var(--surface);
-    border-bottom: 2px solid var(--esmeralda);
+    border-bottom: 2px solid var(--accent);
     padding: 1.5rem 2rem;
     border-radius: 1rem;
   }
@@ -58,7 +57,7 @@
     font-size: .75rem;
     letter-spacing: .2em;
     text-transform: uppercase;
-    color: var(--ambar);
+    color: var(--accent);
     margin-bottom: .5rem;
     text-align: left;
   }
@@ -100,8 +99,8 @@
 
   /* ── WINNER BANNER ── */
   .winner-banner {
-    background: linear-gradient(135deg, #fefce8 0%, #ecfdf5 100%);
-    border: 1px solid var(--ambar);
+    background: linear-gradient(135deg, #fefce8 0%, #eff6ff 100%);
+    border: 1px solid var(--accent);
     border-radius: 1rem;
     padding: 1.2rem 2rem;
     text-align: center;
@@ -113,21 +112,21 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse at 50% -30%, rgba(217, 119, 6, 0.12) 0%, transparent 70%);
+    background: radial-gradient(ellipse at 50% -30%, rgba(184, 134, 11, 0.12) 0%, transparent 70%);
   }
   .winner-banner .crown { font-size: 1.6rem; }
   .winner-banner .winner-label {
     font-size: .7rem;
     letter-spacing: .18em;
     text-transform: uppercase;
-    color: var(--ambar);
+    color: var(--accent);
     opacity: .8;
   }
   .winner-banner .winner-name {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 2rem;
     letter-spacing: .08em;
-    color: var(--ambar);
+    color: var(--azul);
   }
   .winner-banner .winner-votes {
     font-size: .85rem;
@@ -155,7 +154,7 @@
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   }
   .card:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,.1); }
-  .card.winner-card { border-color: var(--ambar); }
+  .card.winner-card { border-color: var(--accent); }
 
   .card-accent-bar {
     position: absolute;
@@ -291,7 +290,7 @@
   tbody tr:last-child td { border-bottom: none; }
   tbody tr:hover td { background: rgba(0,0,0,.02); }
   .tbl-color { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: .5rem; }
-  .tbl-winner { color: var(--ambar); font-weight: 700; }
+  .tbl-winner { color: var(--accent); font-weight: 700; }
 
   /* ── FOOTER ── */
   footer {

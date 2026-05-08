@@ -12,38 +12,37 @@
     <style>
         body { font-family: 'DM Sans', sans-serif; }
         :root {
-            /* Paleta CTPQ — inspirada en Coolors + FlatUI Colors + Happyhues */
-            --azul-logo:   #1E40AF; /* Azul institucional profundo */
-            --rojo-logo:   #DC2626; /* Rojo CTPQ */
-            --ambar:       #D97706; /* Ámbar dorado — energía */
-            --esmeralda:   #059669; /* Esmeralda — tropical Quepos */
-            --violeta:     #7C3AED; /* Violeta moderno */
-            --blanco-logo: #F8FAFC;
-            --bg:          #F1F5F9;
-            --text-dark:   #1E293B;
-            --muted:       #64748B;
+            /* Paleta CTPQ — Blanco, Azul y Dorado */
+            --azul:    #1E40AF; /* Azul institucional */
+            --azul-os: #1e3a8a; /* Azul oscuro */
+            --dorado:  #B8860B; /* Dorado elegante */
+            --dorado-c:#F5C518; /* Dorado claro/brillante */
+            --blanco:  #FFFFFF;
+            --fondo:   #EFF3FF; /* Azul muy tenue para fondo */
+            --texto:   #1E293B;
+            --muted:   #64748B;
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-amber-50 via-white to-emerald-50 min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col" style="background: linear-gradient(135deg, #EFF3FF 0%, #ffffff 50%, #FEFBEA 100%);">
     
     <!-- Encabezado -->
-    <header class="bg-white shadow-md border-b-4" style="border-color: var(--esmeralda);">
+    <header class="bg-white shadow-md border-b-4" style="border-color: var(--dorado);">
         <div class="container mx-auto px-4 py-6 flex items-center justify-between">
             <div class="flex items-center gap-6">
                 <img src="logo%20ctpq.png" alt="Logo CTPQ" class="h-24 w-auto">
                 <div class="text-center md:text-left">
-                    <h1 class="text-2xl md:text-3xl font-extrabold uppercase tracking-wide leading-tight" style="color: var(--azul-logo);">
+                    <h1 class="text-2xl md:text-3xl font-extrabold uppercase tracking-wide leading-tight" style="color: var(--azul);">
                         Colegio Tecnico Profesional de Quepos (CTPQ)
                     </h1>
                     <div class="mt-2 inline-block">
-                        <p class="text-sm font-bold uppercase tracking-widest px-4 py-1 rounded-full" style="background: linear-gradient(135deg, var(--esmeralda) 0%, var(--ambar) 100%); color: white;">
+                        <p class="text-sm font-bold uppercase tracking-widest px-4 py-1 rounded-full" style="background: linear-gradient(135deg, var(--azul) 0%, var(--azul-os) 100%); color: var(--dorado-c);">
                             Sistema de Votacion CTPQ
                         </p>
                     </div>
                 </div>
             </div>
-            <a href="login.html" class="text-white font-bold py-2 px-4 rounded-xl text-sm transition shadow-md hover:shadow-lg" style="background-color: var(--esmeralda);">
+            <a href="login.html" class="text-white font-bold py-2 px-4 rounded-xl text-sm transition shadow-md hover:shadow-lg" style="background-color: var(--azul);">
                 Login
             </a>
         </div>
@@ -54,7 +53,7 @@
         
         <!-- Título -->
         <h1 class="text-2xl md:text-4xl lg:text-5xl font-extrabold text-center mb-10 leading-tight">
-            <span style="color: var(--ambar);">¡VOTA EN EL </span><span style="color: var(--violeta);">CTPQ</span><span style="color: var(--rojo-logo);">!</span>
+            <span style="color: var(--azul);">&#xA1;VOTA EN EL </span><span style="color: var(--dorado);">CTPQ</span><span style="color: var(--azul-os);">!</span>
         </h1>
         
         <!-- Grid de Candidatos -->
@@ -65,8 +64,8 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-t-4 py-4 text-center" style="border-color: var(--esmeralda);">
-        <p class="font-bold uppercase text-sm tracking-wide" style="color: var(--esmeralda);">
+    <footer class="bg-white border-t-4 py-4 text-center" style="border-color: var(--dorado);">
+        <p class="font-bold uppercase text-sm tracking-wide" style="color: var(--azul);">
             Sistema Electoral CTPQ 2026
         </p>
         <p class="text-xs text-gray-500 mt-2">
@@ -77,17 +76,17 @@
     <!-- Modal de Confirmación -->
     <div id="confirmModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
         <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-8 transform transition-all text-center">
-            <div class="mb-4 text-5xl" style="color: var(--violeta);">
+            <div class="mb-4 text-5xl" style="color: var(--dorado);">
                 <i class="fas fa-vote-yea"></i>
             </div>
             <h2 class="text-2xl font-bold text-gray-800 mb-2">¿Confirmar voto?</h2>
             <p class="text-gray-500 mb-8 px-4">
                 Estás a punto de votar por:<br>
-                <span id="partyName" class="font-bold text-xl block mt-2" style="color: var(--rojo-logo);"></span>
+                <span id="partyName" class="font-bold text-xl block mt-2" style="color: var(--dorado);"></span>
             </p>
             <div class="flex flex-col gap-3">
                 <button id="confirm-vote-btn"
-                        class="w-full text-white font-bold py-3 px-6 rounded-xl text-lg transition shadow-md" style="background: linear-gradient(135deg, var(--esmeralda), var(--azul-logo));">
+                        class="w-full text-white font-bold py-3 px-6 rounded-xl text-lg transition shadow-md" style="background: linear-gradient(135deg, var(--azul), var(--azul-os));">
                     ¡Votar ahora!
                 </button>
                 <button id="close-modal-btn"
@@ -101,7 +100,7 @@
     <!-- Pantalla de Gracias -->
         <button id="thanksScreen" 
             class="hidden fixed inset-0 flex items-center justify-center z-50 cursor-pointer border-0 p-0" 
-            style="background: linear-gradient(135deg, var(--violeta) 0%, var(--esmeralda) 60%, var(--ambar) 100%);" 
+            style="background: linear-gradient(135deg, var(--azul-os) 0%, var(--azul) 50%, var(--dorado) 100%);" 
             type="button">
         <div class="text-center px-4">
             <div class="text-white text-9xl mb-6 animate-bounce">
@@ -144,7 +143,7 @@
             empty.classList.add('hidden');
 
             partidos.forEach((party) => {
-                const color = party.color || '#059669';
+                const color = party.color || '#1E40AF';
                 const icon = party.icono || '⭐';
                 const isImage = icon.startsWith('http') || icon.includes('/') || /\.(png|jpe?g|gif|webp|svg)$/i.test(icon);
                 const iconMarkup = isImage
