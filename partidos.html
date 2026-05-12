@@ -571,7 +571,7 @@
           <div class="field-group">
             <label class="field-label" for="party-image">Subir foto / logo</label>
             <input id="party-image" class="field-input" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml">
-            <p class="field-hint">Máximo 1.5 MB. Si subes imagen, reemplaza el emoji.</p>
+            <p class="field-hint">Si subes imagen, reemplaza el emoji.</p>
             <div class="preview-box" id="image-preview">
               <div class="preview-placeholder">
                 <i class="fas fa-image"></i>
@@ -826,7 +826,6 @@
     imageField.addEventListener('change', e => {
       const file = e.target.files?.[0];
       if (!file) return;
-      if (file.size > 1.5 * 1024 * 1024) { showFeedback('Imagen demasiado grande. Máximo 1.5 MB.', 'err'); imageField.value = ''; return; }
       const reader = new FileReader();
       reader.onload = () => { const v = String(reader.result || ''); iconField.value = v; renderPreview(v); clearFeedback(); };
       reader.onerror = () => showFeedback('No se pudo leer la imagen.', 'err');
