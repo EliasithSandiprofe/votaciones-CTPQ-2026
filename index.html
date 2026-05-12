@@ -439,7 +439,6 @@
             align-items: center;
             justify-content: center;
             z-index: 60;
-            cursor: pointer;
             border: none;
             background: linear-gradient(145deg, var(--azul-os) 0%, var(--azul) 60%, #2563EB 100%);
             padding: 2rem;
@@ -482,6 +481,56 @@
             font-size: 0.82rem;
             color: rgba(255,255,255,0.50);
             letter-spacing: 0.05em;
+        }
+
+        .thanks-pin-box {
+            width: 100%;
+            max-width: 330px;
+            margin: 1.15rem auto 0;
+            display: grid;
+            gap: 0.65rem;
+        }
+
+        .thanks-pin-input {
+            width: 100%;
+            border: 1.5px solid rgba(255,255,255,0.35);
+            border-radius: 0.75rem;
+            background: #0b1a3a;
+            color: #ffffff;
+            font-size: 1rem;
+            letter-spacing: 0.12em;
+            text-align: center;
+            padding: 0.72rem 0.85rem;
+            outline: none;
+        }
+
+        .thanks-pin-input::placeholder {
+            color: rgba(255,255,255,0.65);
+            letter-spacing: 0.02em;
+        }
+
+        .thanks-pin-input:focus {
+            border-color: var(--dorado-c);
+            box-shadow: 0 0 0 3px rgba(245, 197, 24, 0.22);
+        }
+
+        .thanks-pin-btn {
+            border: none;
+            border-radius: 0.75rem;
+            background: var(--dorado-c);
+            color: #1e293b;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            padding: 0.72rem 0.85rem;
+            cursor: pointer;
+        }
+
+        .thanks-pin-feedback {
+            min-height: 1.1rem;
+            font-size: 0.82rem;
+            color: #fecaca;
+            font-weight: 500;
         }
 
         @media (max-width: 900px) {
@@ -596,14 +645,19 @@
     </div>
 
     <!-- ── PANTALLA DE GRACIAS ── -->
-    <button id="thanksScreen" class="thanks-screen" style="display:none;" type="button">
+    <div id="thanksScreen" class="thanks-screen" style="display:none;" role="dialog" aria-modal="true" aria-label="Voto registrado">
         <div class="thanks-inner">
             <div class="thanks-check"><i class="fas fa-check"></i></div>
             <div class="thanks-title">¡Gracias<span>!</span></div>
             <p class="thanks-sub">Tu voto ha sido registrado exitosamente.</p>
-            <p class="thanks-hint"><i class="fas fa-hand-pointer mr-1"></i> Toca la pantalla para continuar</p>
+            <p class="thanks-hint"><i class="fas fa-lock mr-1"></i> Ingresa el PIN del aula para habilitar el siguiente voto</p>
+            <fieldset class="thanks-pin-box" aria-label="Desbloqueo de siguiente voto">
+                <input id="thanks-pin-input" class="thanks-pin-input" type="password" inputmode="numeric" autocomplete="off" placeholder="PIN del aula" maxlength="10">
+                <button id="thanks-pin-btn" class="thanks-pin-btn" type="button">Habilitar siguiente voto</button>
+                <p id="thanks-pin-feedback" class="thanks-pin-feedback"></p>
+            </fieldset>
         </div>
-    </button>
+    </div>
 
     <script type="module">
         const { createClient } = globalThis.supabase;
@@ -615,7 +669,7 @@
         let selectedParty = '';
         let selectedPartyId = null;
         let isVoting = false;
-        let nextVoterTimer = null;
+        const VOTING_RESET_PIN = '2026';
 
         // ── Helpers de seguridad (anti-XSS) ──────────────────────────────
         function esc(s) {
@@ -633,6 +687,9 @@
         const confirmBtn = document.getElementById('confirm-vote-btn');
         const closeBtn = document.getElementById('close-modal-btn');
         const voteFeedback = document.getElementById('vote-feedback');
+        const thanksPinInput = document.getElementById('thanks-pin-input');
+        const thanksPinBtn = document.getElementById('thanks-pin-btn');
+        const thanksPinFeedback = document.getElementById('thanks-pin-feedback');
 
         function showVoteFeedback(message) {
             voteFeedback.textContent = message;
@@ -650,6 +707,14 @@
             confirmBtn.innerHTML = isBusy
                 ? '<i class="fas fa-spinner fa-spin"></i> Registrando...'
                 : '<i class="fas fa-check"></i> Confirmar voto';
+        }
+
+        function clearPinFeedback() {
+            thanksPinFeedback.textContent = '';
+        }
+
+        function showPinFeedback(message) {
+            thanksPinFeedback.textContent = message;
         }
 
         function renderPartidos(partidos) {
@@ -751,22 +816,12 @@
             document.documentElement.classList.add('no-scroll');
             document.body.classList.add('no-scroll');
             thanksScreen.style.display = 'flex';
-
-            if (nextVoterTimer) {
-                clearTimeout(nextVoterTimer);
-            }
-
-            // Si nadie toca la pantalla, el sistema pasa automáticamente al siguiente estudiante.
-            nextVoterTimer = setTimeout(() => {
-                resetSystem();
-            }, 4000);
+            thanksPinInput.value = '';
+            clearPinFeedback();
+            setTimeout(() => thanksPinInput.focus(), 50);
         }
 
         function resetSystem() {
-            if (nextVoterTimer) {
-                clearTimeout(nextVoterTimer);
-                nextVoterTimer = null;
-            }
             document.documentElement.classList.remove('no-scroll');
             document.body.classList.remove('no-scroll');
             document.getElementById('thanksScreen').style.display = 'none';
@@ -774,12 +829,37 @@
             isVoting = false;
             selectedParty   = '';
             selectedPartyId = null;
+            clearPinFeedback();
+            thanksPinInput.value = '';
+        }
+
+        function unlockNextVoter() {
+            const pin = String(thanksPinInput.value || '').trim();
+            if (!pin) {
+                showPinFeedback('Ingresa el PIN del aula para continuar.');
+                thanksPinInput.focus();
+                return;
+            }
+
+            if (pin !== VOTING_RESET_PIN) {
+                showPinFeedback('PIN incorrecto. Solo el encargado del aula puede desbloquear.');
+                thanksPinInput.select();
+                return;
+            }
+
+            resetSystem();
         }
 
         document.getElementById('confirm-vote-btn').addEventListener('click', confirmVote);
         document.getElementById('close-modal-btn').addEventListener('click', closeModal);
         document.getElementById('confirmModal').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeModal(); });
-        document.getElementById('thanksScreen').addEventListener('click', resetSystem);
+        thanksPinBtn.addEventListener('click', unlockNextVoter);
+        thanksPinInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                unlockNextVoter();
+            }
+        });
 
         if (sessionStorage.getItem('ctpq_voted')) {
             showThanksScreen();
